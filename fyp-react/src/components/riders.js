@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  where,
+  deleteDoc,
+} from "firebase/firestore";
+import { Table, Spinner, Form, Button } from "react-bootstrap";
 import { firestore } from "../config/firebase-config";
-import { Table, Spinner } from "react-bootstrap";
 
-function Riders() {
+function Riders({ searchTerm, setSearchTerm }) {
   const [riders, setRiders] = useState([]); // State to store fetched riders
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +27,6 @@ function Riders() {
           const rider = docSnap.data();
           const riderId = docSnap.id;
 
-          // Fetch reference data separately (assuming 'areaRef' is the reference field)
           const areaRef = rider.area;
           let area = null;
 
@@ -43,7 +50,6 @@ function Riders() {
           ridersData.push(riderObject);
         }
 
-        console.log("Rider Data:", ridersData);
         setRiders(ridersData);
         setLoading(false);
       } catch (error) {
@@ -55,6 +61,39 @@ function Riders() {
 
     fetchRidersData();
   }, []);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredRiders = riders.filter((rider) => {
+    const searchTermLower = searchTerm.toLowerCase();
+
+    return (
+      (rider.firstName &&
+        rider.firstName.toLowerCase().includes(searchTermLower)) ||
+      (rider.lastName &&
+        rider.lastName.toLowerCase().includes(searchTermLower)) ||
+      (rider.email && rider.email.toLowerCase().includes(searchTermLower)) ||
+      rider.phone.toString().includes(searchTerm) ||
+      (rider.area && rider.area.toLowerCase().includes(searchTermLower)) ||
+      rider.idCard.toString().includes(searchTerm) ||
+      (rider.vehicleNumber &&
+        rider.vehicleNumber.toLowerCase().includes(searchTermLower)) ||
+      (rider.address && rider.address.toLowerCase().includes(searchTermLower))
+    );
+  });
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(firestore, "Riders", id));
+
+      const updatedRiders = riders.filter((rider) => rider.id !== id);
+      setRiders(updatedRiders);
+    } catch (error) {
+      console.error("Error deleting rider: ", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -69,34 +108,41 @@ function Riders() {
   }
 
   return (
-    <Table striped bordered hover>
-      <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Phone</th>
-          <th>Email</th>
-          <th>Address</th>
-          <th>Assigned Area</th>
-          <th>Id Card Number</th>
-          <th>Vehicle Number</th>
-        </tr>
-      </thead>
-      <tbody>
-        {riders.map((rider) => (
-          <tr key={rider.id}>
-            <td>{rider.firstName}</td>
-            <td>{rider.lastName}</td>
-            <td>{rider.phone}</td>
-            <td>{rider.email}</td>
-            <td>{rider.address}</td>
-            <td>{rider.area}</td>
-            <td>{rider.idCard}</td>
-            <td>{rider.vehicleNumber}</td>
+    <div>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Assigned Area</th>
+            <th>Id Card Number</th>
+            <th>Vehicle Number</th>
           </tr>
-        ))}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody>
+          {filteredRiders.map((rider) => (
+            <tr key={rider.id}>
+              <td>{rider.firstName}</td>
+              <td>{rider.lastName}</td>
+              <td>{rider.phone}</td>
+              <td>{rider.email}</td>
+              <td>{rider.address}</td>
+              <td>{rider.area}</td>
+              <td>{rider.idCard}</td>
+              <td>{rider.vehicleNumber}</td>
+              <td>
+                <Button variant="danger" onClick={() => handleDelete(rider.id)}>
+                  Delete
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
   );
 }
 

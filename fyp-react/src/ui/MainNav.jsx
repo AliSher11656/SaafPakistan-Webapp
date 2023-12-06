@@ -51,12 +51,18 @@ function MainNav() {
     <nav>
       <NavList>
         <li>
-          <StyledNavLink to="/home">
+          <StyledNavLink to="/">
             <span>Home</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/riders">
+            <span>Riders</span>
+          </StyledNavLink>
+        </li>
+
+        <li>
+          <StyledNavLink to="/">
             <span>Riders</span>
           </StyledNavLink>
         </li>
