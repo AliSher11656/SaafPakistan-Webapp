@@ -70,6 +70,7 @@ function Riders({ searchTerm, setSearchTerm }) {
     const searchTermLower = searchTerm.toLowerCase();
 
     return (
+    
       (rider.firstName &&
         rider.firstName.toLowerCase().includes(searchTermLower)) ||
       (rider.lastName &&
