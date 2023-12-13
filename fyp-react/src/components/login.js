@@ -12,9 +12,14 @@ const Login = () => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
-        navigate("/");
+        const accessToken = user.accessToken; // Get the access token from Firebase user object
+
+        // Set isLoggedIn and accessToken in localStorage
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("accessToken", accessToken);
+
+        navigate("/home");
         console.log(user);
       })
       .catch((error) => {
@@ -25,47 +30,45 @@ const Login = () => {
   };
 
   return (
-    <>
-      <main>
-        <section>
-          <div>
-            <form>
-              <div>
-                <label htmlFor="email-address">Email address</label>
-                <input
-                  id="email-address"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="Email address"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+    <main>
+      <section>
+        <div>
+          <form>
+            <div>
+              <label htmlFor="email-address">Email address</label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                required
+                placeholder="Email address"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
 
-              <div>
-                <label htmlFor="password">Password</label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  placeholder="Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+            <div>
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
 
-              <div>
-                <button onClick={onLogin}>Login</button>
-              </div>
-            </form>
+            <div>
+              <button onClick={onLogin}>Login</button>
+            </div>
+          </form>
 
-            <p className="text-sm text-white text-center">
-              No account yet? <NavLink to="/signup">Sign up</NavLink>
-            </p>
-          </div>
-        </section>
-      </main>
-    </>
+          <p className="text-sm text-white text-center">
+            No account yet? <NavLink to="/signup">Sign up</NavLink>
+          </p>
+        </div>
+      </section>
+    </main>
   );
 };
 

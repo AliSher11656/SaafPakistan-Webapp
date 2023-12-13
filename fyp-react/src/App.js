@@ -1,46 +1,56 @@
 import "./App.css";
-import Signup from "./components/signup";
 import Login from "./components/login";
-
-import { BrowserRouter as Router } from "react-router-dom";
+import { Navigate, BrowserRouter as Router } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-import Home from "./components/home";
-import Home1 from "./components/user";
-import WarehouseManager from "./ui/warehouseManager";
-import RegisterWarehouseManager from "./ui/RegisterWarehouseManager";
-import RegisterRider from "./ui/RegisterRider";
-import Rider from "./ui/rider";
+import { useState, useEffect } from "react";
+import { Provider } from "react-redux";
+import ProtectedRoute from "./routes/protectedRoute";
+import Admin from "./routes/admin";
+
+function ProviderConfig() {
+  const isLoggedInFromStorage = localStorage.getItem("isLoggedIn") === "true";
+  const [isLoggedIn, setIsLoggedIn] = useState(isLoggedInFromStorage);
+  const [path, setPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    let unmounted = false;
+    if (!unmounted) {
+      setPath(window.location.pathname);
+    }
+    return () => {
+      unmounted = true;
+    };
+  }, [setPath]);
+
+  return (
+    <>
+      <Router basename={process.env.PUBLIC_URL}>
+        {!isLoggedIn ? (
+          <Routes>
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        ) : (
+          <Routes>
+            <Route
+              path="/*"
+              element={<ProtectedRoute path="/*" Component={Admin} />}
+            />
+          </Routes>
+        )}
+        {isLoggedIn &&
+          (path === process.env.PUBLIC_URL ||
+            path === `${process.env.PUBLIC_URL}/`) && (
+            <Routes>
+              <Route path="/home" element={<Navigate to="/home" />} />
+            </Routes>
+          )}
+      </Router>
+    </>
+  );
+}
 
 function App() {
-  return (
-    <Router>
-      <div>
-        <section>
-          <Routes>
-            <Route index path="/" element={<Home></Home>} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/riders" element={<Rider></Rider>} />
-            <Route path="/user" element={<Home1></Home1>} />
-            <Route
-              path="/warehouseManager"
-              element={<WarehouseManager></WarehouseManager>}
-            />
-            <Route
-              path="/warehouseManager/register"
-              element={<RegisterWarehouseManager></RegisterWarehouseManager>}
-            />
-            <Route
-              path="/riders/register"
-              element={<RegisterRider></RegisterRider>}
-            />
-
-            {/* <Route path="/home" element={<Logout />} /> */}
-          </Routes>
-        </section>
-      </div>
-    </Router>
-  );
+  return <ProviderConfig></ProviderConfig>;
 }
 
 export default App;
