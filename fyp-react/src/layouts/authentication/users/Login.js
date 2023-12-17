@@ -21,7 +21,7 @@ import MDButton from "components/MDButton";
 import BasicLayoutLogin from "layouts/authentication/BasicLayoutLogin";
 
 // Images
-// import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import bgImage from "assets/images/bg.png";
 
 //firestore
 import { db } from "../../../firebase";
@@ -67,9 +67,7 @@ const Login = () => {
   };
   return (
     <>
-      <BasicLayoutLogin
-      // image={bgImage}
-      >
+      <BasicLayoutLogin image={bgImage}>
         <Card>
           <MDBox
             variant="gradient"

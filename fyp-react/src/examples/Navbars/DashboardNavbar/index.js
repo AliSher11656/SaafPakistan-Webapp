@@ -12,9 +12,9 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Logout from '@mui/icons-material/Logout';
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Logout from "@mui/icons-material/Logout";
 
 // Amdin panel React components
 import MDBox from "components/MDBox";
@@ -42,17 +42,22 @@ import {
 
 // Authentication
 import { signOut } from "firebase/auth";
-import { auth } from "../../../firebase"
-import { AuthContext } from "context/AuthContext"
+import { auth } from "../../../firebase";
+import { AuthContext } from "context/AuthContext";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useMaterialUIController();
-  const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
+  const {
+    miniSidenav,
+    transparentNavbar,
+    fixedNavbar,
+    openConfigurator,
+    darkMode,
+  } = controller;
   const route = useLocation().pathname.split("/").slice(1);
-  const { dispatchAuth, dispatchAuthRole } = useContext(AuthContext)
-  const navigate = useNavigate()
-
+  const { dispatchAuth, dispatchAuthRole } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   //account icon
   const [anchorEl, setAnchorEl] = useState(null);
@@ -64,14 +69,16 @@ function DashboardNavbar({ absolute, light, isMini }) {
     setAnchorEl(null);
   };
   const handleLogOut = () => {
-    signOut(auth).then(() => {
-      dispatchAuth({ type: "LOGOUT" })
-      dispatchAuthRole({ type: "LOGOUT_ROLE" })
-      navigate("/login")
-    }).catch((error) => {
-      console.log(error)
-    });
-  }
+    signOut(auth)
+      .then(() => {
+        dispatchAuth({ type: "LOGOUT" });
+        dispatchAuthRole({ type: "LOGOUT_ROLE" });
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
     // Setting the navbar type
@@ -83,7 +90,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
     // A function that sets the transparent state of the navbar.
     function handleTransparentNavbar() {
-      setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || fixedNavbar);
+      setTransparentNavbar(
+        dispatch,
+        (fixedNavbar && window.scrollY === 0) || fixedNavbar
+      );
     }
 
     /** 
@@ -100,9 +110,13 @@ function DashboardNavbar({ absolute, light, isMini }) {
   }, [dispatch, fixedNavbar]);
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
+  const handleConfiguratorOpen = () =>
+    setOpenConfigurator(dispatch, !openConfigurator);
   // Styles for the navbar icons
-  const iconsStyle = ({ palette: { dark, white, text }, functions: { rgba } }) => ({
+  const iconsStyle = ({
+    palette: { dark, white, text },
+    functions: { rgba },
+  }) => ({
     color: () => {
       let colorValue = light || darkMode ? white.main : dark.main;
 
@@ -118,11 +132,22 @@ function DashboardNavbar({ absolute, light, isMini }) {
     <AppBar
       position={absolute ? "absolute" : navbarType}
       color="inherit"
-      sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
+      sx={(theme) =>
+        navbar(theme, { transparentNavbar, absolute, light, darkMode })
+      }
     >
       <Toolbar sx={(theme) => navbarContainer(theme)}>
-        <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
-          <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
+        <MDBox
+          color="inherit"
+          mb={{ xs: 1, md: 0 }}
+          sx={(theme) => navbarRow(theme, { isMini })}
+        >
+          <Breadcrumbs
+            icon="home"
+            title={route[route.length - 1]}
+            route={route}
+            light={light}
+          />
         </MDBox>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
@@ -131,7 +156,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
             </MDBox> */}
             <MDBox color={light ? "white" : "inherit"}>
               <IconButton sx={navbarIconButton} size="small" disableRipple>
-                <Icon sx={iconsStyle} onClick={handleClick}>account_circle</Icon>
+                <Icon sx={iconsStyle} onClick={handleClick}>
+                  account_circle
+                </Icon>
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
@@ -142,40 +169,39 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 PaperProps={{
                   elevation: 0,
                   sx: {
-                    overflow: 'visible',
-                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
                     mt: 1.5,
-                    '& .MuiAvatar-root': {
+                    "& .MuiAvatar-root": {
                       width: 32,
                       height: 32,
                       ml: -0.5,
                       mr: 1,
                     },
-                    '&:before': {
+                    "&:before": {
                       content: '""',
-                      display: 'block',
-                      position: 'absolute',
+                      display: "block",
+                      position: "absolute",
                       top: 0,
                       right: 14,
                       width: 10,
                       height: 10,
-                      bgcolor: 'background.paper',
-                      transform: 'translateY(-50%) rotate(45deg)',
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
                       zIndex: 0,
                     },
                   },
                 }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
                 <MenuItem onClick={handleLogOut}>
                   <ListItemIcon>
                     <Logout fontSize="small" />
-                  </ListItemIcon >
+                  </ListItemIcon>
                   Logout
                 </MenuItem>
               </Menu>
-
 
               <IconButton
                 size="small"

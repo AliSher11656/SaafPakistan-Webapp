@@ -1,33 +1,33 @@
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
 // import Brands from "layouts/brands";
-import AddSale from "layouts/addSale";
-import Banks from "layouts/banks";
-import Categories from "layouts/categories";
-import Carousels from "layouts/carousels";
-import Discounts from "layouts/discounts";
-import Notifications from "layouts/notifications/Notifications";
-import SendNotifications from "layouts/notifications/SendNotifications";
+// import AddSale from "layouts/addSale";
+// import Banks from "layouts/banks";
+// import Categories from "layouts/categories";
+// import Carousels from "layouts/carousels";
+// import Discounts from "layouts/discounts";
+// import Notifications from "layouts/notifications/Notifications";
+// import SendNotifications from "layouts/notifications/SendNotifications";
 import Signup from "layouts/authentication/users/Signup";
 
 //auth routes
 // import BrandsDetail from "layouts/brands/components/Detail";
-import BanksDetail from "layouts/banks/components/Detail";
-import SalesDetail from "layouts/addSale/components/Detail";
-import CarouselsDetail from "layouts/carousels/components/Detail";
-import DiscountsDetail from "layouts/discounts/components/Detail";
+// import BanksDetail from "layouts/banks/components/Detail";
+// import SalesDetail from "layouts/addSale/components/Detail";
+// import CarouselsDetail from "layouts/carousels/components/Detail";
+// import DiscountsDetail from "layouts/discounts/components/Detail";
 
 // @mui icons
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import StoreIcon from "@mui/icons-material/Store";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import CategoryIcon from "@mui/icons-material/Category";
-import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import NotificationAddIcon from "@mui/icons-material/NotificationAdd";
-import LoginIcon from "@mui/icons-material/Login";
-import Icon from "@mui/material/Icon";
+// import InventoryIcon from "@mui/icons-material/Inventory";
+// import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+// import CategoryIcon from "@mui/icons-material/Category";
+// import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
+// import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+// import NotificationAddIcon from "@mui/icons-material/NotificationAdd";
+// import LoginIcon from "@mui/icons-material/Login";
+// import Icon from "@mui/material/Icon";
 import * as React from "react";
 import { Navigate } from "react-router-dom";
 import { useContext } from "react";
