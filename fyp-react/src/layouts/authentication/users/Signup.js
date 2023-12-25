@@ -428,7 +428,6 @@ function Signup() {
                   />
                 ) : (
                   <MDButton
-                    // disabled={signupUser.email === '' || signupUser.password === '' || signupUser.role === '' ? true : false}
                     variant="gradient"
                     color="info"
                     fullWidth

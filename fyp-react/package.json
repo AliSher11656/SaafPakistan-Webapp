@@ -1,9 +1,9 @@
 {
-  "name": "admin-panel",
+  "name": "saafpakistan-panel",
   "version": "2.1.0",
   "private": true,
-  "author": "Hurarah",
-  "description": "Admin panel",
+  "author": "Ali-Sher",
+  "description": "SaafPakistan",
   "engines": {
     "node": "14 || 15 || 16",
     "npm": ">=6"

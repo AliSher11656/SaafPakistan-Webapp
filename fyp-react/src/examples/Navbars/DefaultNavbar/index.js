@@ -28,7 +28,16 @@ function DefaultNavbar({ transparent, light }) {
   const [mobileNavbar, setMobileNavbar] = useState(false);
   const [mobileView, setMobileView] = useState(false);
 
-  const openMobileNavbar = ({ currentTarget }) => setMobileNavbar(currentTarget.parentNode);
+  var role = "";
+  const userRole = localStorage.getItem("role");
+  if (userRole === '"admin"') {
+    role = "Admin";
+  } else if (userRole === '"warehouseManager"') {
+    role = "Warehouse Manager";
+  }
+
+  const openMobileNavbar = ({ currentTarget }) =>
+    setMobileNavbar(currentTarget.parentNode);
   const closeMobileNavbar = () => setMobileNavbar(false);
 
   useEffect(() => {
@@ -42,6 +51,7 @@ function DefaultNavbar({ transparent, light }) {
         setMobileNavbar(false);
       }
     }
+    // Assuming "userRole" is the key used to store the role
 
     /** 
      The event listener that's calling the displayMobileNavbar function when 
@@ -88,12 +98,21 @@ function DefaultNavbar({ transparent, light }) {
           lineHeight={1}
           pl={{ xs: 0, lg: 1 }}
         >
-          <MDTypography variant="button" fontWeight="bold" color={light ? "white" : "dark"}>
-            Admin Panel
+          <MDTypography
+            variant="button"
+            fontWeight="bold"
+            color={light ? "white" : "dark"}
+          >
+            {role} Panel
           </MDTypography>
         </MDBox>
         <MDBox color="inherit" display={{ xs: "none", lg: "flex" }} m={0} p={0}>
-          <DefaultNavbarLink icon="donut_large" name="dashboard" route="/admin/dashboard" light={light} />
+          <DefaultNavbarLink
+            icon="donut_large"
+            name="dashboard"
+            route={`/${userRole}/dashboard`}
+            light={light}
+          />
         </MDBox>
         <MDBox
           display={{ xs: "inline-block", lg: "none" }}
@@ -107,7 +126,9 @@ function DefaultNavbar({ transparent, light }) {
           <Icon fontSize="default">{mobileNavbar ? "close" : "menu"}</Icon>
         </MDBox>
       </MDBox>
-      {mobileView && <DefaultNavbarMobile open={mobileNavbar} close={closeMobileNavbar} />}
+      {mobileView && (
+        <DefaultNavbarMobile open={mobileNavbar} close={closeMobileNavbar} />
+      )}
     </Container>
   );
 }

@@ -6,8 +6,10 @@ import {
   getDoc,
   deleteDoc,
 } from "firebase/firestore";
-import { Table, Spinner, Button } from "react-bootstrap";
+import { Table, Spinner } from "react-bootstrap";
 import { db } from "../../../firebase";
+import MDButton from "components/MDButton";
+import "../../../examples/Tables/DataTable/table-style.css";
 
 function Riders({ searchTerm, setSearchTerm }) {
   const [riders, setRiders] = useState([]); // State to store fetched riders
@@ -58,10 +60,6 @@ function Riders({ searchTerm, setSearchTerm }) {
     fetchRidersData();
   }, []);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
   const filteredRiders = riders.filter((rider) => {
     const searchTermLower = searchTerm.toLowerCase();
 
@@ -90,44 +88,63 @@ function Riders({ searchTerm, setSearchTerm }) {
 
   if (loading) {
     return (
-      <Spinner animation="border" role="status">
-        Loading...
-      </Spinner>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "200px",
+        }}
+      >
+        <Spinner
+          animation="border"
+          role="status"
+          style={{ width: "100px", height: "100px" }}
+        >
+          <span>Loading...</span>
+        </Spinner>
+      </div>
     );
   }
 
   if (error) {
     return <div>Error: {error}</div>;
   }
-
   return (
     <div>
-      <Table striped bordered hover>
+      <Table striped bordered hover className="custom-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Address</th>
-            <th>Assigned Area</th>
-            <th>Id Card Number</th>
-            <th>Vehicle Number</th>
+            <th className="table-header">Name</th>
+            <th className="table-header">Phone</th>
+            <th className="table-header">Email</th>
+            <th className="table-header">Address</th>
+            <th className="table-header">Assigned Area</th>
+            <th className="table-header">Id Card Number</th>
+            <th className="table-header">Vehicle Number</th>
+            <th className="table-header"></th>
           </tr>
         </thead>
         <tbody>
           {filteredRiders.map((rider) => (
-            <tr key={rider.id}>
-              <td>{rider.name}</td>
-              <td>{rider.phone}</td>
-              <td>{rider.email}</td>
-              <td>{rider.address}</td>
-              <td>{rider.area}</td>
-              <td>{rider.idCard}</td>
-              <td>{rider.vehicleNumber}</td>
-              <td>
-                <Button variant="danger" onClick={() => handleDelete(rider.id)}>
+            <tr key={rider.id} className="table-row">
+              <td className="table-cell">{rider.name}</td>
+              <td className="table-cell">{rider.phone}</td>
+              <td className="table-cell">{rider.email}</td>
+              <td className="table-cell">{rider.address}</td>
+              <td className="table-cell">{rider.area}</td>
+              <td className="table-cell">{rider.idCard}</td>
+              <td className="table-cell">{rider.vehicleNumber}</td>
+              <td className="table-cell">
+                <MDButton
+                  variant="gradient"
+                  color="dark"
+                  fullWidth
+                  type="delete"
+                  onClick={() => handleDelete(rider.id)}
+                >
                   Delete
-                </Button>
+                </MDButton>
               </td>
             </tr>
           ))}

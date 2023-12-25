@@ -143,10 +143,8 @@ function App() {
               brandName={
                 role === "admin"
                   ? "Admin Panel"
-                  : role === "brand"
-                  ? "Brand Panel"
-                  : role === "bank"
-                  ? "Bank Panel"
+                  : role === "warehouseManager" // Updated role here
+                  ? "Warehouse Manager Panel" // Updated role here
                   : ""
               }
               routes={routes}
