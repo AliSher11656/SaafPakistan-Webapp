@@ -113,6 +113,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const handleConfiguratorOpen = () =>
     setOpenConfigurator(dispatch, !openConfigurator);
   // Styles for the navbar icons
+
   const iconsStyle = ({
     palette: { dark, white, text },
     functions: { rgba },
@@ -154,12 +155,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
             {/* <MDBox pr={1}>
               <MDInput label="Search here" />
             </MDBox> */}
+
             <MDBox color={light ? "white" : "inherit"}>
-              <IconButton sx={navbarIconButton} size="small" disableRipple>
+              <IconButton size="large" disableRipple>
                 <Icon sx={iconsStyle} onClick={handleClick}>
                   account_circle
                 </Icon>
               </IconButton>
+
               <Menu
                 anchorEl={anchorEl}
                 id="account-menu"
@@ -202,7 +205,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   Logout
                 </MenuItem>
               </Menu>
-
+              {/* 
               <IconButton
                 size="small"
                 disableRipple
@@ -222,7 +225,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleConfiguratorOpen}
               >
                 <Icon sx={iconsStyle}>settings</Icon>
-              </IconButton>
+              </IconButton> */}
             </MDBox>
           </MDBox>
         )}

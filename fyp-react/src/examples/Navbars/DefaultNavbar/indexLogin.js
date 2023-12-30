@@ -21,6 +21,7 @@ import breakpoints from "assets/theme/base/breakpoints";
 // Amdin panel React context
 import { useMaterialUIController } from "context";
 
+
 function DefaultNavbar({ transparent, light }) {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;

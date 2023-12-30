@@ -114,6 +114,7 @@ function DefaultNavbar({ transparent, light }) {
             light={light}
           />
         </MDBox>
+
         <MDBox
           display={{ xs: "inline-block", lg: "none" }}
           lineHeight={0}

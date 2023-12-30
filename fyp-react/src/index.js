@@ -5,7 +5,7 @@ import App from "App";
 
 // Material Dashboard 2 React Context Provider
 import { MaterialUIControllerProvider } from "context";
-import { AuthContextProvider } from "context/AuthContext"
+import { AuthContextProvider } from "context/AuthContext";
 
 ReactDOM.render(
   <BrowserRouter>
