@@ -1,6 +1,10 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 node_modules
-D:\FYP\SaafPakistan-Webapp\backend\node_modules
+build
+npm-debug.log
+.nyc
+.env
+.DS_Store
 # dependencies
 /node_modules
 .DS_Store
