@@ -57,3 +57,31 @@ module.exports.deleteRider = async (req, res, next) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+module.exports.updateRider = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    const areaDocRef = firestore.collection("Areas").doc(data.area);
+    data.area = areaDocRef;
+
+    await admin.auth().updateUser(id, {
+      email: data.email,
+    });
+
+    await firestore.collection("rider").doc(id).update({
+      name: data.name,
+      email: data.email,
+      idCard: data.idCard,
+      area: areaDocRef,
+      phone: data.phone,
+      vehicleNumber: data.vehicleNumber,
+      address: data.address,
+    });
+
+    res.status(200).send("Rider updated successfully");
+  } catch (error) {
+    console.error("Error updating rider: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

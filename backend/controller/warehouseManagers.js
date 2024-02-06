@@ -46,3 +46,35 @@ module.exports.deleteWarehouseManager = async (req, res, next) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+module.exports.updateWarehouseManager = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+
+    await admin.auth().updateUser(id, {
+      email: data.email,
+    });
+
+    await firestore.collection("warehouseManager").doc(id).update({
+      name: data.name,
+      email: data.email,
+      idCard: data.idCard,
+      phone: data.phone,
+      address: data.address,
+    });
+
+    await firestore.collection("users").doc(id).update({
+      name: data.name,
+      email: data.email,
+      idCard: data.idCard,
+      phone: data.phone,
+      address: data.address,
+    });
+
+    res.status(200).send("Warehouse manager updated successfully");
+  } catch (error) {
+    console.error("Error updating warehouse manager: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

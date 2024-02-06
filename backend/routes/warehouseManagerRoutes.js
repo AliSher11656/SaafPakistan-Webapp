@@ -14,4 +14,9 @@ router.delete(
   WarehouseManagers.deleteWarehouseManager
 );
 
+router.put(
+  "/warehouseManager/:id",
+  firebaseAuth,
+  WarehouseManagers.updateWarehouseManager
+);
 module.exports = router;

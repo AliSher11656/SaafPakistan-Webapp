@@ -28,6 +28,17 @@ export async function deleteWarehouseManager({ userIdToken, id }) {
   return res.data;
 }
 
+export async function updatedWarehouseManager({ userIdToken, id, data }) {
+  const url = `${apiUrl}/warehouseManager/${id}`;
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
 // export async function getUserData({ userIdToken, userId }) {
 //   const url = `${apiUrl}/areas/${userId}`;
 //   console.log(`userIdToken: ${userIdToken}`);
@@ -55,8 +66,19 @@ export async function getMobileUsersData({ userIdToken }) {
 }
 
 export async function deleteMobileUser({ userIdToken, id }) {
-  const url = `${apiUrl}/user/${id}`;
+  const url = `${apiUrl}/users/${id}`;
   const res = await axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function updatedMobileUser({ userIdToken, id, data }) {
+  const url = `${apiUrl}/users/${id}`;
+  const res = await axios.put(url, data, {
     headers: {
       Authorization: `Bearer ${userIdToken}`,
     },
@@ -90,6 +112,17 @@ export async function deleteRider({ userIdToken, id }) {
   return res.data;
 }
 
+export async function updateRider({ userIdToken, id, data }) {
+  const url = `${apiUrl}/rider/${id}`;
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
 ////////////////////////////////////////////  signUp    //////////////////////////////////////////////////////////////
 
 export async function signup({ userIdToken, data }) {
@@ -103,6 +136,8 @@ export async function signup({ userIdToken, data }) {
   // console.log("res == ", res.data);
   return res.data;
 }
+
+////////////////////////////////////////////  Areas    //////////////////////////////////////////////////////////////
 export async function getAreasData({ userIdToken }) {
   const url = `${apiUrl}/signup`;
   const res = await axios.get(url, {
@@ -110,7 +145,7 @@ export async function getAreasData({ userIdToken }) {
       Authorization: `Bearer ${userIdToken}`,
     },
   });
-  console.log("res == ", res.data);
+  // console.log("res == ", res.data);
   return res.data;
 }
 
