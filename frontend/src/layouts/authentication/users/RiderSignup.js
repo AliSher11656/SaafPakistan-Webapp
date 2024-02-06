@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../../../firebase";
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import { auth } from "../../../firebase";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -17,11 +16,30 @@ import {
 } from "@mui/material";
 import { green } from "@mui/material/colors";
 import BasicLayout from "layouts/authentication/BasicLayout";
+import * as apiService from "../../api-service";
+import { AuthContext } from "../../../context/AuthContext";
 
 function RiderSignup() {
   const [loading, setLoading] = useState(false);
   const [signupError, setSignupError] = useState(false);
-  const [dbAreas, setDbAreas] = useState([]);
+  const [dbareas, setdbAreas] = useState([]);
+  const [userIdToken, setUserIdToken] = useState("");
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const userIdToken = await user.getIdToken();
+        setUserIdToken(userIdToken);
+        const fetchedData = await apiService.getAreasData({ userIdToken });
+        console.log("Fetched data:", fetchedData);
+        setdbAreas(fetchedData);
+      } catch (error) {
+        console.error("Error fetching areas: ", error);
+      }
+    })();
+  }, [user]);
+
   const [signupUser, setSignupUser] = useState({
     email: "",
     password: "",
@@ -35,49 +53,30 @@ function RiderSignup() {
     uid: "",
   });
 
-  useEffect(() => {
-    const fetchAreas = async () => {
-      try {
-        const areasCollection = collection(db, "Areas");
-        const areasSnapshot = await getDocs(areasCollection);
-        const areasData = areasSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setDbAreas(areasData);
-      } catch (error) {
-        console.error("Error fetching areas:", error);
-      }
-    };
-
-    fetchAreas();
-  }, []);
-
   const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const user = await createUserWithEmailAndPassword(
+      const newUser = await createUserWithEmailAndPassword(
         auth,
         signupUser.email,
         signupUser.password
       );
 
-      const areaDocRef = doc(db, "Areas", signupUser.area);
-      const userDocRef = doc(db, "rider", user.user.uid);
-
-      await setDoc(userDocRef, {
+      const riderData = {
         email: signupUser.email,
+        role: "rider",
         name: signupUser.name,
+        uid: newUser.user.uid,
         phone: signupUser.phone,
         address: signupUser.address,
         idCard: signupUser.idCard,
-        area: areaDocRef,
+        area: signupUser.area,
         vehicleNumber: signupUser.vehicleNumber,
-        role: signupUser.role,
-        uid: user.user.uid,
-      });
+      };
+
+      await apiService.signup({ userIdToken, data: riderData });
 
       setSignupUser({
         email: "",
@@ -243,7 +242,7 @@ function RiderSignup() {
                       setSignupUser({ ...signupUser, area: e.target.value })
                     }
                   >
-                    {dbAreas.map((area) => (
+                    {dbareas.map((area) => (
                       <MenuItem key={area.id} value={area.id}>
                         {area.location}
                       </MenuItem>
@@ -272,7 +271,7 @@ function RiderSignup() {
                     fullWidth
                     type="submit"
                   >
-                    SIGN UP AS RIDER
+                    SIGN UP A RIDER
                   </MDButton>
                 )}
               </MDBox>

@@ -91,7 +91,7 @@ const routes = [
     type: "collapse",
     name: "Register",
     icon: <PersonAddIcon />,
-    route: "/admin/signup",
+    route: "/signup",
     component: (
       <AdminAuthRoutes>
         <Signup />

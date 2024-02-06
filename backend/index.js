@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -27,8 +28,10 @@ app.use(morgan("dev"));
 const warehouseManagerRoutes = require("./routes/warehouseManagerRoutes");
 const mobileUserRoutes = require("./routes/mobileUserRoutes");
 const riderRoutes = require("./routes/riderRoutes");
+const signupRoutes = require("./routes/signupRoutes");
+const loginRoutes = require("./routes/loginRoutes");
 
-const PORT = 4000; // backend routing port
+const PORT = process.env.PORT || 4000; // backend routing port
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
@@ -36,5 +39,7 @@ app.listen(PORT, () => {
 app.use("/", warehouseManagerRoutes);
 app.use("/", mobileUserRoutes);
 app.use("/", riderRoutes);
+app.use("/", signupRoutes);
+app.use("/", loginRoutes);
 
 exports.api = functions.https.onRequest(app);

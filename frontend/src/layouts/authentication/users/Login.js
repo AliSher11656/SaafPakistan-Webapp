@@ -25,6 +25,32 @@ const Login = () => {
   const { dispatchAuth, dispatchAuthRole, role } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await axios.post("/api/login", {
+  //       email: loginUser.email,
+  //       password: loginUser.password,
+  //     });
+
+  //     const { user, role } = response.data;
+
+  //     dispatchAuth({ type: "LOGIN", payload: user.uid });
+  //     dispatchAuthRole({ type: "LOGIN_ROLE", payload: role });
+
+  //     navigate(`/${role}/dashboard`);
+  //     setLoginUser({
+  //       email: "",
+  //       password: "",
+  //     });
+  //   } catch (error) {
+  //     setLoginError(true);
+  //   }
+
+  //   setLoading(false);
+
   const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -33,7 +59,7 @@ const Login = () => {
       .then(async (userCredential) => {
         const user = userCredential.user;
 
-        console.log("user == ", user);
+        // console.log("user == ", user);
 
         dispatchAuth({ type: "LOGIN", payload: user.uid });
         const q = query(collection(db, "users"), where("uid", "==", user.uid));

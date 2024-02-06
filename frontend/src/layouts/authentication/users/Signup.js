@@ -1,9 +1,8 @@
-import { useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 // Firebase
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../../../firebase";
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import { auth } from "../../../firebase";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -22,10 +21,11 @@ import {
   Select,
 } from "@mui/material";
 import { green } from "@mui/material/colors";
-import * as React from "react";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/BasicLayout";
+import * as apiService from "../../api-service";
+import { AuthContext } from "../../../context/AuthContext";
 
 // Images
 // import bgImage from "assets/images/bg-sign-in-basic.jpeg";
@@ -35,24 +35,22 @@ function Signup() {
   const [signupError, setSignupError] = useState(false);
   const [signupCustomError, setSignupCustomError] = useState(false);
   const [dbareas, setdbAreas] = useState([]);
+  const [userIdToken, setUserIdToken] = useState("");
+  const { user } = useContext(AuthContext);
 
-  React.useEffect(() => {
-    const fetchAreas = async () => {
+  useEffect(() => {
+    (async () => {
       try {
-        const areasCollection = collection(db, "Areas");
-        const areasSnapshot = await getDocs(areasCollection);
-        const areasData = areasSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setdbAreas(areasData);
+        const userIdToken = await user.getIdToken();
+        setUserIdToken(userIdToken);
+        const fetchedData = await apiService.getAreasData({ userIdToken });
+        console.log("Fetched data:", fetchedData);
+        setdbAreas(fetchedData);
       } catch (error) {
-        console.error("Error fetching areas:", error);
+        console.error("Error fetching areas: ", error);
       }
-    };
-
-    fetchAreas();
-  }, []);
+    })();
+  }, [user]);
 
   const [signupUser, setSignupUser] = useState({
     email: "",
@@ -70,11 +68,10 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
-    //post credentials into authentication
 
     if (signupUser.role === "admin" || signupUser.name !== "") {
       try {
-        const user = await createUserWithEmailAndPassword(
+        const newUser = await createUserWithEmailAndPassword(
           auth,
           signupUser.email,
           signupUser.password
@@ -82,53 +79,38 @@ function Signup() {
 
         if (
           signupUser.role === "admin" ||
-          signupUser.role === "warehouseManager" ||
-          signupUser.role === "rider"
+          signupUser.role === "warehouseManager"
         ) {
-          const dblocation = signupUser.role;
+          const userData = {
+            email: signupUser.email,
+            role: signupUser.role,
+            name: signupUser.name,
+            uid: newUser.user.uid,
+            phone: signupUser.phone,
+            address: signupUser.address,
+            idCard: signupUser.idCard,
+          };
 
-          if (
-            signupUser.role === "admin" ||
-            signupUser.role === "warehouseManager"
-          ) {
-            const userDocRef = doc(db, dblocation, user.user.uid);
-            await setDoc(userDocRef, {
-              email: signupUser.email,
-              role: signupUser.role,
-              name: signupUser.name,
-              uid: user.user.uid,
-              phone: signupUser.phone,
-              address: signupUser.address,
-              idCard: signupUser.idCard,
-            });
+          console.log("userData: ", userData);
+          console.log("userIdToken: ", userIdToken);
+          console.log("signupUser: ", signupUser);
 
-            const userDocRef2 = doc(db, "users", user.user.uid);
-            await setDoc(userDocRef2, {
-              email: signupUser.email,
-              role: signupUser.role,
-              name: signupUser.name,
-              uid: user.user.uid,
-              phone: signupUser.phone,
-              address: signupUser.address,
-              idCard: signupUser.idCard,
-            });
-          }
-          if (signupUser.role === "rider") {
-            const areaDocRef = doc(db, "Areas", signupUser.area);
+          await apiService.signup({ userIdToken, data: userData });
+        }
+        if (signupUser.role === "rider") {
+          const riderData = {
+            email: signupUser.email,
+            role: signupUser.role,
+            name: signupUser.name,
+            uid: newUser.user.uid,
+            phone: signupUser.phone,
+            address: signupUser.address,
+            idCard: signupUser.idCard,
+            area: signupUser.area,
+            vehicleNumber: signupUser.vehicleNumber,
+          };
 
-            const userDocRef3 = doc(db, "rider", user.user.uid);
-            await setDoc(userDocRef3, {
-              email: signupUser.email,
-              role: signupUser.role,
-              name: signupUser.name,
-              uid: user.user.uid,
-              phone: signupUser.phone,
-              address: signupUser.address,
-              idCard: signupUser.idCard,
-              area: areaDocRef,
-              vehicleNumber: signupUser.vehicleNumber,
-            });
-          }
+          await apiService.signup({ userIdToken, data: riderData });
         }
 
         setSignupUser({

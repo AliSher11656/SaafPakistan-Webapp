@@ -38,6 +38,7 @@ module.exports.deleteWarehouseManager = async (req, res, next) => {
     await admin.auth().deleteUser(id);
 
     await firestore.collection("warehouseManager").doc(id).delete();
+    await firestore.collection("users").doc(id).delete();
 
     res.status(200).send("Warehouse manager deleted successfully");
   } catch (error) {
