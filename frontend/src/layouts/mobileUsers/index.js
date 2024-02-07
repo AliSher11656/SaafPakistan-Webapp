@@ -1,16 +1,11 @@
-import { useState } from "react";
-
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MobileUsers from "./data/getMobileUsers";
-import { Card, Grid, Icon, Input } from "@mui/material";
-import MDButton from "components/MDButton";
-import DataTable from "examples/Tables/DataTable";
+import { Card, Grid } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 function MobileUser() {
-  const [searchTerm, setSearchTerm] = useState("");
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -44,23 +39,11 @@ function MobileUser() {
                     >
                       All Users
                     </MDTypography>
-                    <Input
-                      type="text"
-                      placeholder="Search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      style={{ backgroundColor: "white" }}
-                    ></Input>
                   </MDBox>
                 </MDBox>
-                <MDBox pt={3}>
-                  <div>
-                    <MobileUsers
-                      searchTerm={searchTerm}
-                      setSearchTerm={setSearchTerm}
-                    />
-                  </div>
-                </MDBox>
+                <div>
+                  <MobileUsers />
+                </div>
               </Card>
             </Grid>
           </Grid>

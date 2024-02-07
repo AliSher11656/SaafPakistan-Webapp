@@ -1,17 +1,11 @@
-import { useState } from "react";
-
 import Riders from "./data/getriders";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import { Card, Grid, Icon, Input } from "@mui/material";
-import MDButton from "components/MDButton";
-import DataTable from "examples/Tables/DataTable";
+import { Card, Grid } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
 
 function Rider() {
-  const [searchTerm, setSearchTerm] = useState("");
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -45,23 +39,11 @@ function Rider() {
                     >
                       All Riders
                     </MDTypography>
-                    <Input
-                      type="text"
-                      placeholder="Search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      style={{ backgroundColor: "white" }}
-                    ></Input>
                   </MDBox>
                 </MDBox>
-                <MDBox pt={3}>
-                  <div>
-                    <Riders
-                      searchTerm={searchTerm}
-                      setSearchTerm={setSearchTerm}
-                    />
-                  </div>
-                </MDBox>
+                <div>
+                  <Riders />
+                </div>
               </Card>
             </Grid>
           </Grid>

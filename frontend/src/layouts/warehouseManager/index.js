@@ -1,16 +1,12 @@
-import { useState } from "react";
-
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import WarehouseManagers from "./data/getWarehouseManagers";
-import { Card, Grid, Icon, Input } from "@mui/material";
-import MDButton from "components/MDButton";
-import DataTable from "examples/Tables/DataTable";
+import { Card, Grid } from "@mui/material";
+
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 function WarehouseManager() {
-  const [searchTerm, setSearchTerm] = useState("");
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -44,23 +40,11 @@ function WarehouseManager() {
                     >
                       All Warehouse Managers
                     </MDTypography>
-                    <Input
-                      type="text"
-                      placeholder="Search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      style={{ backgroundColor: "white" }}
-                    ></Input>
                   </MDBox>
                 </MDBox>
-                <MDBox pt={3}>
-                  <div>
-                    <WarehouseManagers
-                      searchTerm={searchTerm}
-                      setSearchTerm={setSearchTerm}
-                    />
-                  </div>
-                </MDBox>
+                <div>
+                  <WarehouseManagers />
+                </div>
               </Card>
             </Grid>
           </Grid>

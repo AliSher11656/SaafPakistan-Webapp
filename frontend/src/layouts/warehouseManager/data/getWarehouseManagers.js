@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Table, Spinner, Button } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import MDButton from "components/MDButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { green } from "@mui/material/colors";
 import PropTypes from "prop-types";
-import "../../../examples/Tables/DataTable/table-style.css";
 import * as apiService from "../../api-service";
 import { AuthContext } from "../../../context/AuthContext";
 import {
@@ -22,6 +21,7 @@ import {
   styled,
 } from "@mui/material";
 import MDBox from "components/MDBox";
+import DataTable from "examples/Tables/DataTable";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -59,7 +59,7 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function WarehouseManagers({ searchTerm, setSearchTerm }) {
+function WarehouseManagers() {
   const [warehouseManagers, setWarehouseManagers] = useState([]);
   const [selectedWarehouseManager, setSelectedWarehouseManager] = useState({});
   const [loading, setLoading] = useState(true);
@@ -138,14 +138,6 @@ function WarehouseManagers({ searchTerm, setSearchTerm }) {
       setError2("Error updating warehouse manager: " + error.message);
     }
   };
-
-  const filteredWarehouseManagers = warehouseManagers.filter(
-    (warehouseManager) =>
-      Object.values(warehouseManager)
-        .join(" ")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div>
@@ -331,60 +323,55 @@ function WarehouseManagers({ searchTerm, setSearchTerm }) {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <Table striped bordered hover className="custom-table">
-          <thead>
-            <tr>
-              <th className="table-header">Name</th>
-              <th className="table-header">Phone</th>
-              <th className="table-header">Email</th>
-              <th className="table-header">Address</th>
-              <th className="table-header">Id Card Number</th>
-              <th className="table-header"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredWarehouseManagers.map((warehouseManager) => (
-              <tr key={warehouseManager.id} className="table-row">
-                <td className="table-cell">{warehouseManager.name}</td>
-                <td className="table-cell">{warehouseManager.phone}</td>
-                <td className="table-cell">{warehouseManager.email}</td>
-                <td className="table-cell">{warehouseManager.address}</td>
-                <td className="table-cell">{warehouseManager.idCard}</td>
-                <td className="table-cell">
-                  <MDBox
-                    display="flex"
-                    alignItems="center"
-                    mt={{ xs: 2, sm: 0 }}
-                    ml={{ xs: -1.5, sm: 0 }}
-                  >
-                    <MDBox mr={1}>
-                      <MDButton
-                        variant="text"
-                        color="error"
-                        onClick={() => {
-                          deleteAlertOpen();
-                          setDeleteById(warehouseManager.id);
-                        }}
-                      >
-                        <Icon>delete</Icon>&nbsp;delete
-                      </MDButton>
-                    </MDBox>
+        <DataTable
+          pagination={{ variant: "gradient", color: "info" }}
+          canSearch={true}
+          table={{
+            columns: [
+              { Header: "Name", accessor: "name", width: "25%" },
+              { Header: "Phone", accessor: "phone", width: "15%" },
+              { Header: "Email", accessor: "email", width: "20%" },
+              { Header: "Address", accessor: "address", width: "25%" },
+              { Header: "ID Card Number", accessor: "idCard", width: "15%" },
+              { Header: "Actions", accessor: "action", align: "center" },
+            ],
+            rows: warehouseManagers.map((warehouseManager) => ({
+              name: warehouseManager.name,
+              phone: warehouseManager.phone,
+              email: warehouseManager.email,
+              address: warehouseManager.address,
+              idCard: warehouseManager.idCard,
+              action: (
+                <MDBox display="flex" alignItems="center">
+                  <MDBox mr={1}>
                     <MDButton
                       variant="text"
-                      color={"dark"}
+                      color="error"
                       onClick={() => {
-                        setSelectedWarehouseManager(warehouseManager);
-                        warehouseManagerModalOpen();
+                        deleteAlertOpen();
+                        setDeleteById(warehouseManager.id);
                       }}
                     >
-                      <Icon>edit</Icon>&nbsp;edit
+                      <Icon>delete</Icon>
+                      {/* &nbsp;delete */}
                     </MDButton>
                   </MDBox>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                  <MDButton
+                    variant="text"
+                    color={"dark"}
+                    onClick={() => {
+                      setSelectedWarehouseManager(warehouseManager);
+                      warehouseManagerModalOpen();
+                    }}
+                  >
+                    <Icon>edit</Icon>
+                    {/* &nbsp;edit */}
+                  </MDButton>
+                </MDBox>
+              ),
+            })),
+          }}
+        />
       )}
     </div>
   );

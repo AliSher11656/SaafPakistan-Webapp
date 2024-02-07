@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Table, Spinner } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import MDButton from "components/MDButton";
-import "../../../examples/Tables/DataTable/table-style.css";
 import * as apiService from "../../api-service";
 import { AuthContext } from "../../../context/AuthContext";
 import {
@@ -15,14 +14,13 @@ import {
   Typography,
   TextField,
   MenuItem,
-  Select,
 } from "@mui/material";
 import MDBox from "components/MDBox";
 import { Icon } from "@mui/material";
 import PropTypes from "prop-types";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button } from "@mui/material";
 import { Box } from "@mui/system";
+import DataTable from "examples/Tables/DataTable";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -62,7 +60,7 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function Riders({ searchTerm, setSearchTerm }) {
+function Riders() {
   const [riders, setRiders] = useState([]);
   const [selectedRider, setSelectedRider] = useState({});
   const [userIdToken, setUserIdToken] = useState("");
@@ -159,13 +157,6 @@ function Riders({ searchTerm, setSearchTerm }) {
     }
   };
 
-  const filteredRiders = riders.filter((rider) =>
-    Object.values(rider)
-      .join(" ")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div>
       <Dialog
@@ -255,6 +246,7 @@ function Riders({ searchTerm, setSearchTerm }) {
               id="area"
               label="Area"
               select
+              sx={{ height: "2.8rem", m: 2 }}
               value={selectedRider.area}
               onChange={(e) =>
                 setSelectedRider({ ...selectedRider, area: e.target.value })
@@ -329,65 +321,60 @@ function Riders({ searchTerm, setSearchTerm }) {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <Table striped bordered hover className="custom-table">
-          <thead>
-            <tr>
-              <th className="table-header">Name</th>
-              <th className="table-header">Email</th>
-              <th className="table-header">ID Card</th>
-              <th className="table-header">Area</th>
-              <th className="table-header">Phone</th>
-              <th className="table-header">Vehicle Number</th>
-              <th className="table-header">Address</th>
-              <th className="table-header"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredRiders.map((rider) => (
-              <tr key={rider.id} className="table-row">
-                <td className="table-cell">{rider.name}</td>
-                <td className="table-cell">{rider.email}</td>
-                <td className="table-cell">{rider.idCard}</td>
-                <td className="table-cell">{rider.area}</td>
-                <td className="table-cell">{rider.phone}</td>
-                <td className="table-cell">{rider.vehicleNumber}</td>
-                <td className="table-cell">{rider.address}</td>
-                <td className="table-cell">
-                  <MDBox
-                    display="flex"
-                    alignItems="center"
-                    mt={{ xs: 2, sm: 0 }}
-                    ml={{ xs: -1.5, sm: 0 }}
+        <DataTable
+          canSearch={true}
+          pagination={{ variant: "gradient", color: "info" }}
+          table={{
+            columns: [
+              { Header: "Name", accessor: "name", width: "20%" },
+              { Header: "Email", accessor: "email", width: "20%" },
+              { Header: "ID Card", accessor: "idCard", width: "15%" },
+              { Header: "Area", accessor: "area", width: "10%" },
+              { Header: "Phone", accessor: "phone", width: "15%" },
+              {
+                Header: "Vehicle Number",
+                accessor: "vehicleNumber",
+                width: "10%",
+              },
+              { Header: "Address", accessor: "address", width: "20%" },
+              { Header: "Actions", accessor: "action", align: "center" },
+            ],
+            rows: riders.map((rider) => ({
+              name: rider.name,
+              email: rider.email,
+              idCard: rider.idCard,
+              area: rider.area,
+              phone: rider.phone,
+              vehicleNumber: rider.vehicleNumber,
+              address: rider.address,
+              action: (
+                <MDBox display="flex" alignItems="center" ml={-3}>
+                  <MDButton
+                    variant="text"
+                    color="error"
+                    onClick={() => {
+                      deleteAlertOpen();
+                      setDeleteId(rider.id);
+                    }}
                   >
-                    <MDBox mr={1}>
-                      <MDButton
-                        variant="text"
-                        color="error"
-                        onClick={() => {
-                          deleteAlertOpen();
-                          setDeleteId(rider.id);
-                        }}
-                      >
-                        <Icon>delete</Icon>&nbsp;delete
-                      </MDButton>
-                    </MDBox>
-                    <MDButton
-                      variant="text"
-                      color={"dark"}
-                      onClick={() => {
-                        setSelectedRider(rider);
-                        fetchAreasData();
-                        ridersModalOpen();
-                      }}
-                    >
-                      <Icon>edit</Icon>&nbsp;edit
-                    </MDButton>
-                  </MDBox>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                    <Icon>delete</Icon>
+                  </MDButton>
+                  <MDButton
+                    variant="text"
+                    color={"dark"}
+                    onClick={() => {
+                      setSelectedRider(rider);
+                      fetchAreasData();
+                      ridersModalOpen();
+                    }}
+                  >
+                    <Icon>edit</Icon>
+                  </MDButton>
+                </MDBox>
+              ),
+            })),
+          }}
+        />
       )}
     </div>
   );

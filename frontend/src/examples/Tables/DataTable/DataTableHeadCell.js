@@ -7,13 +7,7 @@ import Icon from "@mui/material/Icon";
 // Amdin panel React components
 import MDBox from "components/MDBox";
 
-// Amdin panel React contexts
-import { useMaterialUIController } from "context";
-
 function DataTableHeadCell({ width, children, sorted, align, ...rest }) {
-  const [controller] = useMaterialUIController();
-  const { darkMode } = controller;
-
   return (
     <MDBox
       component="th"
@@ -28,14 +22,14 @@ function DataTableHeadCell({ width, children, sorted, align, ...rest }) {
         {...rest}
         position="relative"
         textAlign={align}
-        color={darkMode ? "white" : "secondary"}
-        opacity={0.7}
+        color="black" // Set color to black
         sx={({ typography: { size, fontWeightBold } }) => ({
-          fontSize: size.xxs,
+          fontSize: size.xs,
           fontWeight: fontWeightBold,
           textTransform: "uppercase",
           cursor: sorted && "pointer",
           userSelect: sorted && "none",
+          color: "black",
         })}
       >
         {children}
@@ -47,22 +41,13 @@ function DataTableHeadCell({ width, children, sorted, align, ...rest }) {
             left={align === "right" ? "-5px" : "unset"}
             sx={({ typography: { size } }) => ({
               fontSize: size.lg,
+              color: "black",
             })}
           >
-            <MDBox
-              position="absolute"
-              top={-6}
-              color={sorted === "asce" ? "text" : "secondary"}
-              opacity={sorted === "asce" ? 1 : 0.5}
-            >
+            <MDBox position="absolute" top={-6} color="black">
               <Icon>arrow_drop_up</Icon>
             </MDBox>
-            <MDBox
-              position="absolute"
-              top={0}
-              color={sorted === "desc" ? "text" : "secondary"}
-              opacity={sorted === "desc" ? 1 : 0.5}
-            >
+            <MDBox position="absolute" top={0} color="black">
               <Icon>arrow_drop_down</Icon>
             </MDBox>
           </MDBox>
@@ -77,6 +62,7 @@ DataTableHeadCell.defaultProps = {
   width: "auto",
   sorted: "none",
   align: "left",
+  color: "black",
 };
 
 // Typechecking props for the DataTableHeadCell
@@ -85,6 +71,7 @@ DataTableHeadCell.propTypes = {
   children: PropTypes.node.isRequired,
   sorted: PropTypes.oneOf([false, "none", "asce", "desc"]),
   align: PropTypes.oneOf(["left", "right", "center"]),
+  color: "black",
 };
 
 export default DataTableHeadCell;

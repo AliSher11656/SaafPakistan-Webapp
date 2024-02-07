@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Table, Spinner } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import MDButton from "components/MDButton";
-import "../../../examples/Tables/DataTable/table-style.css";
 import * as apiService from "../../api-service";
 import { AuthContext } from "../../../context/AuthContext";
 import MDBox from "components/MDBox";
@@ -22,6 +21,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@mui/system/styled";
 import { green } from "@mui/material/colors";
+import DataTable from "examples/Tables/DataTable";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -61,7 +61,7 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function MobileUsers({ searchTerm, setSearchTerm }) {
+function MobileUsers() {
   const [mobileUsers, setMobileUsers] = useState([]);
   const [selectedMobileUser, setSelectedMobileUser] = useState({});
   const [loading, setLoading] = useState(true);
@@ -138,13 +138,6 @@ function MobileUsers({ searchTerm, setSearchTerm }) {
       setError2("Error updating mobile user: " + error.message);
     }
   };
-
-  const filteredMobileUsers = mobileUsers.filter((mobileUser) =>
-    Object.values(mobileUser)
-      .join(" ")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div>
@@ -341,62 +334,55 @@ function MobileUsers({ searchTerm, setSearchTerm }) {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <Table striped bordered hover className="custom-table">
-          <thead>
-            <tr>
-              <th className="table-header">Name</th>
-              <th className="table-header">Phone</th>
-              <th className="table-header">Email</th>
-              <th className="table-header">Address</th>
-              <th className="table-header">Area</th>
-              <th className="table-header">Account Type</th>
-              <th className="table-header"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMobileUsers.map((mobileUser) => (
-              <tr key={mobileUser.id} className="table-row">
-                <td className="table-cell">{mobileUser.name}</td>
-                <td className="table-cell">{mobileUser.phone}</td>
-                <td className="table-cell">{mobileUser.email}</td>
-                <td className="table-cell">{mobileUser.address}</td>
-                <td className="table-cell">{mobileUser.area}</td>
-                <td className="table-cell">{mobileUser.accountType}</td>
-                <td className="table-cell">
-                  <MDBox
-                    display="flex"
-                    alignItems="center"
-                    mt={{ xs: 2, sm: 0 }}
-                    ml={{ xs: -1.5, sm: 0 }}
-                  >
-                    <MDBox mr={1}>
-                      <MDButton
-                        variant="text"
-                        color="error"
-                        onClick={() => {
-                          deleteAlertOpen();
-                          setDeleteId(mobileUser.id);
-                        }}
-                      >
-                        <Icon>delete</Icon>&nbsp;delete
-                      </MDButton>
-                    </MDBox>
+        <DataTable
+          canSearch={true}
+          pagination={{ variant: "gradient", color: "info" }}
+          table={{
+            columns: [
+              { Header: "Name", accessor: "name", width: "15%" },
+              { Header: "Phone", accessor: "phone", width: "15%" },
+              { Header: "Email", accessor: "email", width: "20%" },
+              { Header: "Address", accessor: "address", width: "20%" },
+              { Header: "Area", accessor: "area", width: "10%" },
+              { Header: "Account Type", accessor: "accountType", width: "15%" },
+              { Header: "Actions", accessor: "action", align: "center" },
+            ],
+            rows: mobileUsers.map((mobileUser) => ({
+              name: mobileUser.name,
+              phone: mobileUser.phone,
+              email: mobileUser.email,
+              address: mobileUser.address,
+              area: mobileUser.area,
+              accountType: mobileUser.accountType,
+              action: (
+                <MDBox display="flex" alignItems="center">
+                  <MDBox mr={1}>
                     <MDButton
                       variant="text"
-                      color={"dark"}
+                      color="error"
                       onClick={() => {
-                        setSelectedMobileUser(mobileUser);
-                        mobileUserModalOpen();
+                        deleteAlertOpen();
+                        setDeleteId(mobileUser.id);
                       }}
                     >
-                      <Icon>edit</Icon>&nbsp;edit
+                      <Icon>delete</Icon>
                     </MDButton>
                   </MDBox>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                  <MDButton
+                    variant="text"
+                    color={"dark"}
+                    onClick={() => {
+                      setSelectedMobileUser(mobileUser);
+                      mobileUserModalOpen();
+                    }}
+                  >
+                    <Icon>edit</Icon>
+                  </MDButton>
+                </MDBox>
+              ),
+            })),
+          }}
+        />
       )}
     </div>
   );
