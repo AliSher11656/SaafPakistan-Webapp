@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const CLOUD_FUNCTIONS_ORIGIN = "http://localhost:3000";
+const CLOUD_FUNCTIONS_ORIGIN = "http://localhost:4000";
+// const CLOUD_FUNCTIONS_ORIGIN = "https://saafpakistan.live";
+
 const apiUrl = `${CLOUD_FUNCTIONS_ORIGIN}`;
 
 ////////////////////////////////////////////   Warehouse Managers    //////////////////////////////////////////////
@@ -141,6 +143,50 @@ export async function signup({ userIdToken, data }) {
 export async function getAreasData({ userIdToken }) {
   const url = `${apiUrl}/signup`;
   const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function getareasData({ userIdToken }) {
+  const url = `${apiUrl}/areas`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function deleteArea({ userIdToken, id }) {
+  const url = `${apiUrl}/areas/${id}`;
+  const res = await axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function updatedArea({ userIdToken, id, data }) {
+  const url = `${apiUrl}/areas/${id}`;
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function createArea({ userIdToken, data }) {
+  const url = `${apiUrl}/areas`;
+  const res = await axios.post(url, data, {
     headers: {
       Authorization: `Bearer ${userIdToken}`,
     },

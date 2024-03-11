@@ -76,15 +76,15 @@ const routes = [
     route: "/users",
     component: <AdminAuthRoutes>{<MobileUser></MobileUser>}</AdminAuthRoutes>,
   },
-  // {
-  //   routeRole: "admin",
-  //   type: "collapse",
-  //   name: "Areas",
-  //   key: "admin/areas",
-  //   icon: <PeopleIcon />,
-  //   route: "/areas",
-  //   component: <AdminAuthRoutes>{<Area></Area>}</AdminAuthRoutes>,
-  // },
+  {
+    routeRole: "admin",
+    type: "collapse",
+    name: "Areas",
+    key: "admin/areas",
+    icon: <PeopleIcon />,
+    route: "/areas",
+    component: <AdminAuthRoutes>{<Area></Area>}</AdminAuthRoutes>,
+  },
 
   {
     routeRole: "admin",

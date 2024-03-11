@@ -1,6 +1,6 @@
 const express = require("express");
 const Signup = require("../controller/signup");
-const Area = require("../controller/area");
+const Area = require("../controller/areas");
 const firebaseAuth = require("../middleware/firebase-auth");
 
 const router = express.Router();

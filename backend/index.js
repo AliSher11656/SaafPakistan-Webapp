@@ -30,6 +30,7 @@ const mobileUserRoutes = require("./routes/mobileUserRoutes");
 const riderRoutes = require("./routes/riderRoutes");
 const signupRoutes = require("./routes/signupRoutes");
 const loginRoutes = require("./routes/loginRoutes");
+const areaRoutes = require("./routes/areaRoutes");
 
 const PORT = process.env.PORT || 4000; // backend routing port
 app.listen(PORT, () => {
@@ -41,5 +42,6 @@ app.use("/", mobileUserRoutes);
 app.use("/", riderRoutes);
 app.use("/", signupRoutes);
 app.use("/", loginRoutes);
+app.use("/", areaRoutes);
 
 exports.api = functions.https.onRequest(app);

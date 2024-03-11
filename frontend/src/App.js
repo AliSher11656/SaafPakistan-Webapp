@@ -7,10 +7,6 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Icon from "@mui/material/Icon";
-
-// Amdin panel React components
-import MDBox from "components/MDBox";
 
 // Amdin panel React example components
 import Sidenav from "examples/Sidenav";

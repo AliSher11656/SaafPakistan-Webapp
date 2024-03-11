@@ -1,6 +1,5 @@
 {
   "name": "saafpakistan-panel",
-  "version": "2.1.0",
   "private": true,
   "author": "Ali-Sher",
   "description": "SaafPakistan",
@@ -48,7 +47,7 @@
     "eject": "react-scripts eject",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start"
   },
-  "proxy": "http://localhost:4000/",
+  "proxy": "http://localhost:4000",
   "eslintConfig": {
     "extends": [
       "react-app",

@@ -41,7 +41,7 @@ export const AuthContext = createContext(initialState);
 
 export const AuthContextProvider = ({ children }) => {
   const auth = getAuth();
-  const [user, loading] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const [state, dispatchAuth] = useReducer(AuthReducer, initialState);
   const [roleState, dispatchAuthRole] = useReducer(AuthReducer, initialState);
   useEffect(() => {

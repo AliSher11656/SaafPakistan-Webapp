@@ -99,6 +99,7 @@ function Riders() {
         }
       })();
     }
+    fetchAreasData();
   }, [user]);
 
   const fetchAreasData = async () => {
