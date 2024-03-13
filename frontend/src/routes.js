@@ -7,6 +7,8 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
 import PeopleIcon from "@mui/icons-material/People";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import RecyclingIcon from "@mui/icons-material/Recycling";
 
 import * as React from "react";
 import { Navigate } from "react-router-dom";
@@ -17,6 +19,7 @@ import WarehouseManager from "layouts/warehouseManager";
 import MobileUser from "layouts/mobileUsers";
 import RiderSignup from "layouts/authentication/users/RiderSignup";
 import Area from "layouts/areas";
+import Recyclable from "layouts/recyclables";
 
 const AdminAuthRoutes = ({ children }) => {
   const { role } = useContext(AuthContext);
@@ -81,9 +84,18 @@ const routes = [
     type: "collapse",
     name: "Areas",
     key: "admin/areas",
-    icon: <PeopleIcon />,
+    icon: <LocationOnIcon />,
     route: "/areas",
     component: <AdminAuthRoutes>{<Area></Area>}</AdminAuthRoutes>,
+  },
+  {
+    routeRole: "admin",
+    type: "collapse",
+    name: "Recyclables",
+    key: "admin/recyclables",
+    icon: <RecyclingIcon />,
+    route: "/recyclables",
+    component: <AdminAuthRoutes>{<Recyclable></Recyclable>}</AdminAuthRoutes>,
   },
 
   {

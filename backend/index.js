@@ -31,6 +31,9 @@ const riderRoutes = require("./routes/riderRoutes");
 const signupRoutes = require("./routes/signupRoutes");
 const loginRoutes = require("./routes/loginRoutes");
 const areaRoutes = require("./routes/areaRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const recyclableRoutes = require("./routes/recyclablesRoutes");
+const statsRoutes = require("./routes/statsRoutes");
 
 const PORT = process.env.PORT || 4000; // backend routing port
 app.listen(PORT, () => {
@@ -43,5 +46,8 @@ app.use("/", riderRoutes);
 app.use("/", signupRoutes);
 app.use("/", loginRoutes);
 app.use("/", areaRoutes);
+app.use("/", orderRoutes);
+app.use("/", recyclableRoutes);
+app.use("/", statsRoutes);
 
 exports.api = functions.https.onRequest(app);

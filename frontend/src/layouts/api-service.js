@@ -1,9 +1,32 @@
 import axios from "axios";
 
-const CLOUD_FUNCTIONS_ORIGIN = "http://localhost:4000";
-// const CLOUD_FUNCTIONS_ORIGIN = "https://saafpakistan.live";
+// const CLOUD_FUNCTIONS_ORIGIN = "http://localhost:4000";
+const CLOUD_FUNCTIONS_ORIGIN = "https://saafpakistan.live";
 
 const apiUrl = `${CLOUD_FUNCTIONS_ORIGIN}`;
+//////////////////////////////////////////// Dashboard  /////////////////////////////////////////////////////////////
+
+// export async function getOrders({ userIdToken }) {
+//   const url = `${apiUrl}/admin/dashboard`;
+//   const res = await axios.get(url, {
+//     headers: {
+//       Authorization: `Bearer ${userIdToken}`,
+//     },
+//   });
+//   // console.log("res == ", res.data);
+//   return res.data;
+// }
+
+export async function getStats({ userIdToken }) {
+  const url = `${apiUrl}/admin/dashboard`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
 
 ////////////////////////////////////////////   Warehouse Managers    //////////////////////////////////////////////
 
@@ -40,18 +63,6 @@ export async function updatedWarehouseManager({ userIdToken, id, data }) {
   // console.log("res == ", res.data);
   return res.data;
 }
-
-// export async function getUserData({ userIdToken, userId }) {
-//   const url = `${apiUrl}/areas/${userId}`;
-//   console.log(`userIdToken: ${userIdToken}`);
-//   const res = await axios.get(url, {
-//     headers: {
-//       Authorization: `Bearer ${userIdToken}`,
-//     },
-//   });
-//   console.log("res == ", res.data);
-//   return res.data;
-// }
 
 /////////////////////////////////////////////  MObile Users   /////////////////////////////////////////////////////////////
 
@@ -186,6 +197,51 @@ export async function updatedArea({ userIdToken, id, data }) {
 
 export async function createArea({ userIdToken, data }) {
   const url = `${apiUrl}/areas`;
+  const res = await axios.post(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+//////////////////////////////////////////////  Recyclables  //////////////////////////////////////////////////////////
+
+export async function getRecyclablesData({ userIdToken }) {
+  const url = `${apiUrl}/recyclables`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function deleteRecyclable({ userIdToken, id }) {
+  const url = `${apiUrl}/recyclables/${id}`;
+  const res = await axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function updatedRecyclable({ userIdToken, id, data }) {
+  const url = `${apiUrl}/recyclables/${id}`;
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function createRecyclable({ userIdToken, data }) {
+  const url = `${apiUrl}/recyclables`;
   const res = await axios.post(url, data, {
     headers: {
       Authorization: `Bearer ${userIdToken}`,
