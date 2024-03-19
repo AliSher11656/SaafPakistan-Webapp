@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const CLOUD_FUNCTIONS_ORIGIN = "http://localhost:4000";
-const CLOUD_FUNCTIONS_ORIGIN = "https://saafpakistan.live";
+const CLOUD_FUNCTIONS_ORIGIN = "http://localhost:4000";
+// const CLOUD_FUNCTIONS_ORIGIN = "https://saafpakistan.live";
 
 const apiUrl = `${CLOUD_FUNCTIONS_ORIGIN}`;
 //////////////////////////////////////////// Dashboard  /////////////////////////////////////////////////////////////
@@ -92,6 +92,30 @@ export async function deleteMobileUser({ userIdToken, id }) {
 export async function updatedMobileUser({ userIdToken, id, data }) {
   const url = `${apiUrl}/users/${id}`;
   const res = await axios.put(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function getUserOrders({ userIdToken, id }) {
+  const url = `${apiUrl}/users/${id}`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+////////////////////////////////////////////  Orders  //////////////////////////////////////////////////////////////
+
+export async function deleteOrder({ userIdToken, id, deleteId }) {
+  const url = `${apiUrl}/users/${id}/${deleteId}`;
+  const res = await axios.delete(url, {
     headers: {
       Authorization: `Bearer ${userIdToken}`,
     },

@@ -24,7 +24,7 @@ function Dashboard() {
     datasets: { label: "", data: [] },
   });
 
-  console.log("usersSignedData == ", usersSignedData);
+  // console.log("usersSignedData == ", usersSignedData);
   React.useEffect(() => {
     const fetchOrders = async () => {
       if (!user || !user.getIdToken) {

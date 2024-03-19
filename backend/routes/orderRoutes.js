@@ -8,8 +8,14 @@ router.get(
   //  firebaseAuth,
   Order.getOrders
 );
+
+router.get(
+  "/users/:id",
+  //  firebaseAuth,
+  Order.getUserOrders
+);
 // router.post("/orders", firebaseAuth, Order.createOrder);
-// router.delete("/orders/:id", firebaseAuth, Order.deleteOrder);
+router.delete("/users/:id/:deleteId", firebaseAuth, Order.deleteOrder);
 // router.put("/orders/:id", firebaseAuth, Order.updateOrder);
 
 module.exports = router;

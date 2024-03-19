@@ -22,6 +22,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import styled from "@mui/system/styled";
 import { green } from "@mui/material/colors";
 import DataTable from "examples/Tables/DataTable";
+import { Link } from "react-router-dom";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -313,7 +314,7 @@ function MobileUsers() {
             </MDButton>
           )}
         </DialogActions>
-      </BootstrapDialog>{" "}
+      </BootstrapDialog>
       {loading ? (
         <div
           style={{
@@ -356,7 +357,13 @@ function MobileUsers() {
               accountType: mobileUser.accountType,
               action: (
                 <MDBox display="flex" alignItems="center">
-                  <MDBox mr={1}>
+                  <Link to={`/users/${mobileUser.id}`}>
+                    <MDButton variant="gradient" color="success" size="small">
+                      Orders
+                    </MDButton>
+                  </Link>
+
+                  <MDBox mr={1} ml={1.5}>
                     <MDButton
                       variant="text"
                       color="error"

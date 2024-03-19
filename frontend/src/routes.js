@@ -20,6 +20,7 @@ import MobileUser from "layouts/mobileUsers";
 import RiderSignup from "layouts/authentication/users/RiderSignup";
 import Area from "layouts/areas";
 import Recyclable from "layouts/recyclables";
+import UserOrders from "layouts/mobileUsers/orders/Orders";
 
 const AdminAuthRoutes = ({ children }) => {
   const { role } = useContext(AuthContext);
@@ -154,6 +155,17 @@ const routes = [
   },
 ];
 
-const authRoutes = [];
+const authRoutes = [
+  {
+    routeRole: "admin",
+    type: "authRoutes",
+    route: "users/:id",
+    component: (
+      <AdminAuthRoutes>
+        <UserOrders></UserOrders>
+      </AdminAuthRoutes>
+    ),
+  },
+];
 export default routes;
 export { authRoutes };

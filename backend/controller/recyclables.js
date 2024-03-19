@@ -35,7 +35,9 @@ module.exports.createRecyclable = async (req, res, next) => {
       price: data.price,
     };
 
-    const recyclableDocRef = await firestore.collection("recyclables").add(recyclable);
+    const recyclableDocRef = await firestore
+      .collection("recyclables")
+      .add(recyclable);
 
     res.status(201).json({ id: recyclableDocRef.id });
   } catch (error) {
