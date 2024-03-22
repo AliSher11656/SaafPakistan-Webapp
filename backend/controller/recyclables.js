@@ -14,7 +14,7 @@ module.exports.getRecyclables = async (req, res, next) => {
       const recyclableObject = {
         id: recyclableId,
         item: recyclable.item,
-        price: recyclable.price,
+        price: parseFloat(recyclable.price), // Convert price to a number
       };
 
       recyclablesData.push(recyclableObject);
@@ -32,7 +32,7 @@ module.exports.createRecyclable = async (req, res, next) => {
     const data = req.body;
     const recyclable = {
       item: data.item,
-      price: data.price,
+      price: parseFloat(data.price), // Convert price to a number
     };
 
     const recyclableDocRef = await firestore
@@ -64,10 +64,13 @@ module.exports.updateRecyclable = async (req, res, next) => {
     const id = req.params.id;
     const data = req.body;
 
-    await firestore.collection("recyclables").doc(id).update({
-      item: data.item,
-      price: data.price,
-    });
+    await firestore
+      .collection("recyclables")
+      .doc(id)
+      .update({
+        item: data.item,
+        price: parseFloat(data.price), // Convert price to a number
+      });
 
     res.status(200).send("Recyclable updated successfully");
   } catch (error) {

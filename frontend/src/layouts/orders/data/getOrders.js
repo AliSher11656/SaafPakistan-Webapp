@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import MDButton from "components/MDButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { green } from "@mui/material/colors";
+import PropTypes from "prop-types";
 import * as apiService from "../../api-service";
 import { AuthContext } from "../../../context/AuthContext";
-import MDBox from "components/MDBox";
-import { Icon } from "@mui/material";
-import PropTypes from "prop-types";
 import {
   Box,
   CircularProgress,
@@ -14,30 +14,30 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Icon,
+  IconButton,
   TextField,
   Typography,
+  styled,
 } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import styled from "@mui/system/styled";
-import { green } from "@mui/material/colors";
+import MDBox from "components/MDBox";
 import DataTable from "examples/Tables/DataTable";
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import MDTypography from "components/MDTypography";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     width: "35em",
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
   },
 }));
-
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
   return (
-    <DialogTitle sx={{ m: 1, mb: 2 }} {...other}>
+    <DialogTitle sx={{ m: 1.5, p: 2 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
@@ -56,87 +56,120 @@ function BootstrapDialogTitle(props) {
     </DialogTitle>
   );
 }
-
 BootstrapDialogTitle.propTypes = {
   children: PropTypes.node,
   onClose: PropTypes.func.isRequired,
 };
 
-function MobileUsers() {
-  const [mobileUsers, setMobileUsers] = useState([]);
-  const [selectedMobileUser, setSelectedMobileUser] = useState({});
+function Orders() {
+  const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [error2, setError2] = useState("");
+  const [error2, setError2] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const { user } = useContext(AuthContext);
   const [deleteAlert, setDeleteAlert] = useState(false);
-  const [mobileUserModal, setMobileUserModal] = useState(false);
-  const mobileUserModalOpen = () => setMobileUserModal(true);
-  const mobileUserModalClose = () => {
-    setMobileUserModal(false);
-    setLoading(false);
-    setError2("");
-  };
+  const [orderModal, setOrderModal] = useState(false);
+
+  const location = useLocation();
+  const id = new URLSearchParams(location.search).get("id");
 
   const deleteAlertOpen = () => setDeleteAlert(true);
   const deleteAlertClose = () => setDeleteAlert(false);
+  const orderModalOpen = () => setOrderModal(true);
+  const orderModalClose = () => {
+    setOrderModal(false);
+    setLoading(false);
+    setError2("");
+  };
 
   useEffect(() => {
     if (user && user.getIdToken) {
       (async () => {
         const userIdToken = await user.getIdToken();
         try {
-          const fetchedData = await apiService.getMobileUsersData({
+          const fetchedData = await apiService.getOrders({
             userIdToken,
+            id,
           });
-          setMobileUsers(fetchedData);
+          setOrders(fetchedData);
           setLoading(false);
         } catch (error) {
-          setError("Error fetching mobile users: " + error.message);
+          setError("Error fetching Orders: " + error.message);
           setLoading(false);
         }
       })();
     }
   }, [user]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (deleteId) => {
     if (!user || !user.getIdToken) {
       return;
     }
     const userIdToken = await user.getIdToken();
     try {
-      await apiService.deleteMobileUser({ userIdToken, id });
-      const updatedMobileUsers = mobileUsers.filter(
-        (mobileUser) => mobileUser.id !== id
+      await apiService.deleteOrder({ userIdToken, id, deleteId });
+      const updatedUserOrders = orders.filter(
+        (order) => order.orderId !== deleteId
       );
-      setMobileUsers(updatedMobileUsers);
+      setOrders(updatedUserOrders);
     } catch (error) {
       console.error("Error deleting mobile user: ", error);
     }
   };
 
-  const onUpdateMobileUser = async (e) => {
-    e.preventDefault();
-    if (!user || !user.getIdToken) {
-      return;
+  //   const onUpdateOrder = async (e) => {
+  //     e.preventDefault();
+  //     if (!user || !user.getIdToken) {
+  //       return;
+  //     }
+  //     const userIdToken = await user.getIdToken();
+  //     try {
+  //       await apiService.updatedOrder({
+  //         userIdToken,
+  //         id: selectedOrder.id,
+  //         data: selectedOrder,
+  //       });
+  //       const updatedOrders = orders.map((order) =>
+  //         order.id === selectedOrder.id ? selectedOrder : order
+  //       );
+  //       setOrders(updatedOrders);
+  //       orderModalClose();
+  //     } catch (error) {
+  //       console.error("Error updating Order: ", error);
+  //       setError2("Error updating Order: " + error.message);
+  //     }
+  //   };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 0:
+        return "Pending";
+      case 1:
+        return "Completed";
+      case 3:
+        return "Cancelled";
+      default:
+        return "Unknown";
     }
-    const userIdToken = await user.getIdToken();
-    try {
-      await apiService.updatedMobileUser({
-        userIdToken,
-        id: selectedMobileUser.id,
-        data: selectedMobileUser,
-      });
-      const updatedMobileUsers = mobileUsers.map((mobileUser) =>
-        mobileUser.id === selectedMobileUser.id
-          ? selectedMobileUser
-          : mobileUser
-      );
-      setMobileUsers(updatedMobileUsers);
-      mobileUserModalClose();
-    } catch (error) {
-      setError2("Error updating mobile user: " + error.message);
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "success";
+      case "Cancelled":
+        return "error";
+      case "Pending":
+        return "warning";
+      default:
+        return "";
     }
   };
 
@@ -178,21 +211,22 @@ function MobileUsers() {
           </MDButton>
         </DialogActions>
       </Dialog>
-      <BootstrapDialog
-        onClose={mobileUserModalClose}
+
+      {/* <BootstrapDialog
+        onClose={orderModalClose}
         aria-labelledby="customized-dialog-title"
-        open={mobileUserModal}
+        open={orderModal}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
-          onClose={mobileUserModalClose}
+          onClose={orderModalClose}
         >
           <Typography
             variant="h3"
             color="secondary.main"
             sx={{ pt: 1, textAlign: "center" }}
           >
-            Edit Mobile User
+            Edit Order
           </Typography>
         </BootstrapDialogTitle>
         <DialogContent dividers>
@@ -215,10 +249,10 @@ function MobileUsers() {
               type="text"
               color="secondary"
               required
-              value={selectedMobileUser.name}
+              value={selectedOrder.name}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
+                setSelectedOrder({
+                  ...selectedOrder,
                   name: e.target.value,
                 })
               }
@@ -228,10 +262,10 @@ function MobileUsers() {
               type="tel"
               color="secondary"
               required
-              value={selectedMobileUser.phone}
+              value={selectedOrder.phone}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
+                setSelectedOrder({
+                  ...selectedOrder,
                   phone: e.target.value,
                 })
               }
@@ -241,10 +275,10 @@ function MobileUsers() {
               type="email"
               color="secondary"
               required
-              value={selectedMobileUser.email}
+              value={selectedOrder.email}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
+                setSelectedOrder({
+                  ...selectedOrder,
                   email: e.target.value,
                 })
               }
@@ -254,42 +288,29 @@ function MobileUsers() {
               type="text"
               color="secondary"
               required
-              value={selectedMobileUser.address}
+              value={selectedOrder.address}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
+                setSelectedOrder({
+                  ...selectedOrder,
                   address: e.target.value,
                 })
               }
             />
             <TextField
-              label="Area"
+              label="ID Card Number"
               type="text"
               color="secondary"
               required
-              value={selectedMobileUser.area}
+              value={selectedOrder.idCard}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  area: e.target.value,
+                setSelectedOrder({
+                  ...selectedOrder,
+                  idCard: e.target.value,
                 })
               }
             />
-            <TextField
-              label="Account Type"
-              type="text"
-              color="secondary"
-              required
-              value={selectedMobileUser.accountType}
-              onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  accountType: e.target.value,
-                })
-              }
-            />
-            {error === "" ? null : (
-              <Typography variant="h6" color="error">
+            {error2 === "" ? null : (
+              <Typography variant="body2" color="error">
                 {error2}
               </Typography>
             )}
@@ -308,13 +329,14 @@ function MobileUsers() {
               variant="contained"
               color="info"
               type="submit"
-              onClick={onUpdateMobileUser}
+              onClick={onUpdateOrder}
             >
               Update
             </MDButton>
           )}
         </DialogActions>
-      </BootstrapDialog>
+      </BootstrapDialog> */}
+
       {loading ? (
         <div
           style={{
@@ -336,56 +358,76 @@ function MobileUsers() {
         <div>Error: {error}</div>
       ) : (
         <DataTable
-          canSearch={true}
           pagination={{ variant: "gradient", color: "info" }}
+          canSearch={true}
           table={{
             columns: [
-              { Header: "Name", accessor: "name", width: "15%" },
-              { Header: "Phone", accessor: "phone", width: "15%" },
-              { Header: "Email", accessor: "email", width: "20%" },
-              { Header: "Address", accessor: "address", width: "20%" },
-              { Header: "Area", accessor: "area", width: "10%" },
-              { Header: "Account Type", accessor: "accountType", width: "15%" },
-              { Header: "Actions", accessor: "action", align: "center" },
+              {
+                Header: "Order ID",
+                accessor: "orderId",
+              },
+              {
+                Header: "Order Date",
+                accessor: "orderDate",
+              },
+              {
+                Header: "Area",
+                accessor: "area",
+              },
+              {
+                Header: "Customer Phone Number",
+                accessor: "phoneNumber",
+              },
+              {
+                Header: "Items",
+                accessor: "items",
+              },
+              {
+                Header: "Total Price",
+                accessor: "totalPrice",
+              },
+              {
+                Header: "Total Weight",
+                accessor: "totalWeight",
+              },
+              {
+                Header: "Status",
+                accessor: "status",
+                Cell: ({ value }) => (
+                  <MDTypography color={getStatusColor(value)} variant="body2">
+                    {value}
+                  </MDTypography>
+                ),
+              },
+              {
+                Header: "Actions",
+                accessor: "action",
+                align: "center",
+              },
             ],
-            rows: mobileUsers.map((mobileUser) => ({
-              name: mobileUser.name,
-              phone: mobileUser.phone,
-              email: mobileUser.email,
-              address: mobileUser.address,
-              area: mobileUser.area,
-              accountType: mobileUser.accountType,
+            rows: orders.map((order) => ({
+              orderId: order.orderid,
+              orderDate: formatDate(order.orderDate),
+              area: order.area,
+              phoneNumber: order.phoneNumber,
+              items: order.recyclables
+                .filter((item) => item.quantity > 0)
+                .map((item) => `${item.quantity}kg ${item.item}`)
+                .join(", "),
+              totalPrice: order.totalPrice,
+              totalWeight: order.totalWeight,
+              status: getStatusLabel(order.status),
               action: (
-                <MDBox display="flex" alignItems="center">
-                  <Link to={`/users/${mobileUser.id}?id=${mobileUser.id}`}>
-                    <MDButton variant="gradient" color="success" size="small">
-                      Orders
-                    </MDButton>
-                  </Link>
-
-                  <MDBox mr={1} ml={1.5}>
-                    <MDButton
-                      variant="text"
-                      color="error"
-                      onClick={() => {
-                        deleteAlertOpen();
-                        setDeleteId(mobileUser.id);
-                      }}
-                    >
-                      <Icon>delete</Icon>
-                    </MDButton>
-                  </MDBox>
-                  <MDButton
-                    variant="text"
-                    color={"dark"}
-                    onClick={() => {
-                      setSelectedMobileUser(mobileUser);
-                      mobileUserModalOpen();
-                    }}
-                  >
-                    <Icon>edit</Icon>
-                  </MDButton>
-                </MDBox>
+                <MDButton
+                  variant="text"
+                  color="error"
+                  onClick={() => {
+                    deleteAlertOpen();
+                    setDeleteId(order.orderId);
+                  }}
+                >
+                  <Icon>delete</Icon>
+                </MDButton>
               ),
             })),
           }}
@@ -395,4 +437,4 @@ function MobileUsers() {
   );
 }
 
-export default MobileUsers;
+export default Orders;

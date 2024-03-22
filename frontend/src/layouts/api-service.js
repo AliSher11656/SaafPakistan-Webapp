@@ -111,11 +111,32 @@ export async function getUserOrders({ userIdToken, id }) {
   return res.data;
 }
 
+export async function getRiderOrders({ userIdToken, id }) {
+  const url = `${apiUrl}/rider/${id}`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  return res.data;
+}
+
 ////////////////////////////////////////////  Orders  //////////////////////////////////////////////////////////////
 
 export async function deleteOrder({ userIdToken, id, deleteId }) {
   const url = `${apiUrl}/users/${id}/${deleteId}`;
   const res = await axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function getOrders({ userIdToken, id }) {
+  const url = `${apiUrl}/orders/${id}`;
+  const res = await axios.get(url, {
     headers: {
       Authorization: `Bearer ${userIdToken}`,
     },

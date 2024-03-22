@@ -15,7 +15,7 @@ import {
   Icon,
 } from "@mui/material";
 
-function GetMobileUsersOrders() {
+function GetRidersOrders() {
   const [orders, setOrders] = useState([]);
   const { user } = useContext(AuthContext);
   const location = useLocation();
@@ -33,7 +33,7 @@ function GetMobileUsersOrders() {
       (async () => {
         const userIdToken = await user.getIdToken();
         try {
-          const fetchedData = await apiService.getUserOrders({
+          const fetchedData = await apiService.getRiderOrders({
             userIdToken,
             id,
           });
@@ -54,9 +54,7 @@ function GetMobileUsersOrders() {
     const userIdToken = await user.getIdToken();
     try {
       await apiService.deleteOrder({ userIdToken, id, deleteId });
-      const updatedUserOrders = orders.filter(
-        (mobileUser) => mobileUser.id !== deleteId
-      );
+      const updatedUserOrders = orders.filter((rider) => rider.id !== deleteId);
       setOrders(updatedUserOrders);
     } catch (error) {
       console.error("Error deleting mobile user: ", error);
@@ -159,34 +157,32 @@ function GetMobileUsersOrders() {
           table={{
             columns: [
               {
+                Header: "Customer ID",
+                accessor: "customerId",
+              },
+              {
                 Header: "Order ID",
                 accessor: "orderId",
-                width: "10%",
               },
               {
                 Header: "Order Date",
                 accessor: "orderDate",
-                width: "12%",
               },
               {
                 Header: "Items",
                 accessor: "items",
-                width: "30%",
               },
               {
                 Header: "Total Price",
                 accessor: "totalPrice",
-                width: "10%",
               },
               {
                 Header: "Total Weight",
                 accessor: "totalWeight",
-                width: "10%",
               },
               {
                 Header: "Status",
                 accessor: "status",
-                width: "15%",
                 Cell: ({ value }) => (
                   <MDTypography color={getStatusColor(value)} variant="body2">
                     {value}
@@ -197,10 +193,10 @@ function GetMobileUsersOrders() {
                 Header: "Actions",
                 accessor: "action",
                 align: "center",
-                width: "5%",
               },
             ],
             rows: orders.map((order) => ({
+              customerId: order.customer,
               orderId: order.orderid,
               orderDate: formatDate(order.orderDate),
               items: order.recyclables
@@ -230,4 +226,4 @@ function GetMobileUsersOrders() {
   );
 }
 
-export default GetMobileUsersOrders;
+export default GetRidersOrders;

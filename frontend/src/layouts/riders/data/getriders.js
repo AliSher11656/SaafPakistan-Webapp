@@ -21,6 +21,7 @@ import PropTypes from "prop-types";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box } from "@mui/system";
 import DataTable from "examples/Tables/DataTable";
+import { Link } from "react-router-dom";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -350,6 +351,12 @@ function Riders() {
               address: rider.address,
               action: (
                 <MDBox display="flex" alignItems="center" ml={-3}>
+                  <Link to={`/rider/${rider.id}?id=${rider.id}`}>
+                    <MDButton variant="gradient" color="success" size="small">
+                      Orders
+                    </MDButton>
+                  </Link>
+
                   <MDButton
                     variant="text"
                     color="error"

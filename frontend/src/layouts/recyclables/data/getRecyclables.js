@@ -223,7 +223,7 @@ function Recyclables({ refreshRecyclables }) {
             />
             <TextField
               label="Price"
-              type="text"
+              type="number"
               color="secondary"
               required
               value={selectedRecyclable.price}

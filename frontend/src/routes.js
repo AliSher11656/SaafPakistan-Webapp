@@ -9,6 +9,7 @@ import WarehouseIcon from "@mui/icons-material/Warehouse";
 import PeopleIcon from "@mui/icons-material/People";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import RecyclingIcon from "@mui/icons-material/Recycling";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 
 import * as React from "react";
 import { Navigate } from "react-router-dom";
@@ -21,6 +22,8 @@ import RiderSignup from "layouts/authentication/users/RiderSignup";
 import Area from "layouts/areas";
 import Recyclable from "layouts/recyclables";
 import UserOrders from "layouts/mobileUsers/orders/Orders";
+import RiderOrders from "layouts/riders/Orders/Orders";
+import Order from "layouts/orders";
 
 const AdminAuthRoutes = ({ children }) => {
   const { role } = useContext(AuthContext);
@@ -98,7 +101,15 @@ const routes = [
     route: "/recyclables",
     component: <AdminAuthRoutes>{<Recyclable></Recyclable>}</AdminAuthRoutes>,
   },
-
+  {
+    routeRole: "admin",
+    type: "collapse",
+    name: "Orders",
+    key: "admin/orders",
+    icon: <ListAltIcon />,
+    route: "/orders",
+    component: <AdminAuthRoutes>{<Order></Order>}</AdminAuthRoutes>,
+  },
   {
     routeRole: "admin",
     type: "collapse",
@@ -165,6 +176,22 @@ const authRoutes = [
         <UserOrders></UserOrders>
       </AdminAuthRoutes>
     ),
+  },
+  {
+    routeRole: "admin",
+    type: "authRoutes",
+    route: "rider/:id",
+    component: (
+      <AdminAuthRoutes>
+        <RiderOrders></RiderOrders>
+      </AdminAuthRoutes>
+    ),
+  },
+  {
+    routeRole: "admin",
+    type: "authRoutes",
+    route: "orders/:id",
+    component: <AdminAuthRoutes></AdminAuthRoutes>,
   },
 ];
 export default routes;

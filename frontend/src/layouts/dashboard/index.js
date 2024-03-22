@@ -7,8 +7,8 @@ import { AuthContext } from "../../context/AuthContext";
 import { Grid } from "@mui/material";
 import MDBox from "components/MDBox";
 import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
   const [numberOfOrders, setNumberOfOrders] = React.useState(0);
@@ -24,7 +24,6 @@ function Dashboard() {
     datasets: { label: "", data: [] },
   });
 
-  // console.log("usersSignedData == ", usersSignedData);
   React.useEffect(() => {
     const fetchOrders = async () => {
       if (!user || !user.getIdToken) {
@@ -43,7 +42,8 @@ function Dashboard() {
         const counts = orders.reduce(
           (acc, order) => {
             if (order.status === 0) acc.pending++;
-            else if (order.status === 1) acc.completed++;
+            else if (order.status === 1) acc.cancelled++;
+            else if (order.status === 2) acc.completed++;
             else if (order.status === 3) acc.cancelled++;
             return acc;
           },
@@ -64,41 +64,49 @@ function Dashboard() {
       <>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>
-            <DefaultInfoCard
-              icon="shopping_cart"
-              title="Total Orders"
-              description="Total number of orders placed"
-              value={numberOfOrders}
-            />
+            <Link to={`/orders`}>
+              <DefaultInfoCard
+                icon="shopping_cart"
+                title="Total Orders"
+                description="Total number of orders placed"
+                value={numberOfOrders}
+              />
+            </Link>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
-              <DefaultInfoCard
-                icon="pending"
-                title="Pending Orders"
-                description="Total number of pending pickups"
-                value={orderStatusCounts.pending}
-              />
+              <Link to={`/orders?id=${0}`}>
+                <DefaultInfoCard
+                  icon="pending"
+                  title="Pending Orders"
+                  description="Total number of pending pickups"
+                  value={orderStatusCounts.pending}
+                />
+              </Link>
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
-              <DefaultInfoCard
-                icon="check_circle"
-                title="Completed Orders"
-                description="Total number of pickups completed"
-                value={orderStatusCounts.completed}
-              />
+              <Link to={`/orders?id=${2}`}>
+                <DefaultInfoCard
+                  icon="check_circle"
+                  title="Completed Orders"
+                  description="Total number of pickups completed"
+                  value={orderStatusCounts.completed}
+                />
+              </Link>
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
-              <DefaultInfoCard
-                icon="cancel"
-                title="Cancelled Orders"
-                description="Total number of cancelled pickups"
-                value={orderStatusCounts.cancelled}
-              />
+              <Link to={`/orders?id=${1}`}>
+                <DefaultInfoCard
+                  icon="cancel"
+                  title="Cancelled Orders"
+                  description="Total number of cancelled pickups"
+                  value={orderStatusCounts.cancelled}
+                />
+              </Link>
             </MDBox>
           </Grid>
         </Grid>

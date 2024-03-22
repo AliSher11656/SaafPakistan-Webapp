@@ -4,18 +4,16 @@ const firebaseAuth = require("../middleware/firebase-auth");
 
 const router = express.Router();
 router.get(
-  // "/admin/dashboard",
-  //  firebaseAuth,
+  "/orders/:id?",
+  // firebaseAuth,
   Order.getOrders
 );
 
-router.get(
-  "/users/:id",
-  //  firebaseAuth,
-  Order.getUserOrders
-);
-// router.post("/orders", firebaseAuth, Order.createOrder);
+router.get("/users/:id", firebaseAuth, Order.getUserOrders);
+router.get("/rider/:id", firebaseAuth, Order.getRiderOrders);
 router.delete("/users/:id/:deleteId", firebaseAuth, Order.deleteOrder);
+
+// router.post("/orders", firebaseAuth, Order.createOrder);
 // router.put("/orders/:id", firebaseAuth, Order.updateOrder);
 
 module.exports = router;
