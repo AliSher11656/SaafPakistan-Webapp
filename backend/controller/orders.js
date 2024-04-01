@@ -74,6 +74,7 @@ module.exports.getUserOrders = async (req, res, next) => {
 
       const orderObject = {
         orderId: orderId,
+        orderid: order.orderid,
         address: order.address,
         area: order.area,
         customer: order.customer,

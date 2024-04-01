@@ -7,7 +7,7 @@ module.exports.getData = async (req, res, next) => {
     const querySnapshot = await orderCollectionRef.get();
 
     const ordersData = [];
-    const year = new Date().getFullYear(); // Get the current year
+    const year = new Date().getFullYear();
 
     const usersSignedData = {
       labels: [
@@ -51,8 +51,8 @@ module.exports.getData = async (req, res, next) => {
       const orderId = docSnap.id;
 
       // Check if items is an array before attempting to iterate over it
-      const recyclables = Array.isArray(order.items)
-        ? order.items.map((item) => ({
+      const recyclables = Array.isArray(order.recyclables)
+        ? order.recyclables.map((item) => ({
             item: item.item,
             price: item.price,
             quantity: item.quantity,

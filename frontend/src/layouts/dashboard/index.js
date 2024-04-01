@@ -9,11 +9,13 @@ import MDBox from "components/MDBox";
 import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import { Link } from "react-router-dom";
+import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 
 function Dashboard() {
   const [numberOfOrders, setNumberOfOrders] = React.useState(0);
   const { user } = React.useContext(AuthContext);
   const date = new Date();
+
   const [orderStatusCounts, setOrderStatusCounts] = React.useState({
     pending: 0,
     completed: 0,
@@ -23,6 +25,21 @@ function Dashboard() {
     labels: [],
     datasets: { label: "", data: [] },
   });
+  const [recyclablesChartData, setRecyclablesChartData] = React.useState({
+    labels: [],
+    datasets: { label: "", data: [] },
+  });
+
+  function getLastThirtyDaysStartDate() {
+    const today = new Date();
+    const lastThirtyDays = new Date(today);
+    lastThirtyDays.setDate(today.getDate() - 29);
+    return lastThirtyDays.toLocaleDateString();
+  }
+
+  function getLastThirtyDaysEndDate() {
+    return new Date().toLocaleDateString();
+  }
 
   React.useEffect(() => {
     const fetchOrders = async () => {
@@ -33,12 +50,21 @@ function Dashboard() {
       try {
         const Data = await apiService.getStats(userIdToken);
         const orders = Data.orders;
-        const usersSignedData = Data.usersSigned;
+        const filteredOrders = Data.orders.filter((order) => {
+          const last30days = new Date();
+          last30days.setDate(last30days.getDate() - 29);
 
+          // Check if the order date is within the last seven days
+          return new Date(order.orderDate) >= last30days;
+        });
+
+        // Continue processing orders data
+        const usersSignedData = Data.usersSigned;
         setUsersSignedData(usersSignedData);
 
         const numberOfOrders = orders.length;
         setNumberOfOrders(numberOfOrders);
+
         const counts = orders.reduce(
           (acc, order) => {
             if (order.status === 0) acc.pending++;
@@ -50,6 +76,24 @@ function Dashboard() {
           { pending: 0, completed: 0, cancelled: 0 }
         );
         setOrderStatusCounts(counts);
+        const recyclablesChart = filteredOrders.reduce(
+          (acc, order) => {
+            order.recyclables.forEach((item) => {
+              const { item: itemName, quantity } = item;
+              const index = acc.labels.indexOf(itemName);
+
+              if (index !== -1) {
+                acc.datasets.data[index] += quantity;
+              } else {
+                acc.labels.push(itemName);
+                acc.datasets.data.push(quantity);
+              }
+            });
+            return acc;
+          },
+          { labels: [], datasets: { label: "Total Quantity in Kg", data: [] } }
+        );
+        setRecyclablesChartData(recyclablesChart);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -125,6 +169,17 @@ function Dashboard() {
                   }
                   date={date.toLocaleDateString()}
                   chart={usersSignedData}
+                />
+              </MDBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <MDBox mb={3}>
+                <ReportsBarChart
+                  color="success"
+                  title="Recyclable Items"
+                  description={`Total recyclable items based on orders placed in the last 30 days.`}
+                  date={`from ${getLastThirtyDaysStartDate()} to ${getLastThirtyDaysEndDate()}`}
+                  chart={recyclablesChartData}
                 />
               </MDBox>
             </Grid>
