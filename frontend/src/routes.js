@@ -10,6 +10,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import RecyclingIcon from "@mui/icons-material/Recycling";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
+import LeaderboardOutlinedIcon from "@mui/icons-material/LeaderboardOutlined";
 
 import * as React from "react";
 import { Navigate } from "react-router-dom";
@@ -24,6 +26,8 @@ import Recyclable from "layouts/recyclables";
 import UserOrders from "layouts/mobileUsers/orders/Orders";
 import RiderOrders from "layouts/riders/Orders/Orders";
 import Order from "layouts/orders";
+import Tip from "layouts/tips";
+import Leaderboard from "layouts/leaderboard";
 
 const AdminAuthRoutes = ({ children }) => {
   const { role } = useContext(AuthContext);
@@ -52,7 +56,7 @@ const routes = [
     routeRole: "admin",
     type: "collapse",
     name: "Riders",
-    key: "admin/rider",
+    key: "rider",
     icon: <TwoWheelerIcon />,
     route: "/rider",
     component: (
@@ -65,7 +69,7 @@ const routes = [
     routeRole: "admin",
     type: "collapse",
     name: "Warehouse Managers",
-    key: "admin/warehouseManager",
+    key: "warehouseManager",
     icon: <WarehouseIcon />,
     route: "/warehouseManager",
     component: (
@@ -78,7 +82,7 @@ const routes = [
     routeRole: "admin",
     type: "collapse",
     name: "Users",
-    key: "admin/users",
+    key: "users",
     icon: <PeopleIcon />,
     route: "/users",
     component: <AdminAuthRoutes>{<MobileUser></MobileUser>}</AdminAuthRoutes>,
@@ -87,7 +91,7 @@ const routes = [
     routeRole: "admin",
     type: "collapse",
     name: "Areas",
-    key: "admin/areas",
+    key: "areas",
     icon: <LocationOnIcon />,
     route: "/areas",
     component: <AdminAuthRoutes>{<Area></Area>}</AdminAuthRoutes>,
@@ -96,7 +100,7 @@ const routes = [
     routeRole: "admin",
     type: "collapse",
     name: "Recyclables",
-    key: "admin/recyclables",
+    key: "recyclables",
     icon: <RecyclingIcon />,
     route: "/recyclables",
     component: <AdminAuthRoutes>{<Recyclable></Recyclable>}</AdminAuthRoutes>,
@@ -105,10 +109,28 @@ const routes = [
     routeRole: "admin",
     type: "collapse",
     name: "Orders",
-    key: "admin/orders",
+    key: "orders",
     icon: <ListAltIcon />,
     route: "/orders",
     component: <AdminAuthRoutes>{<Order></Order>}</AdminAuthRoutes>,
+  },
+  {
+    routeRole: "admin",
+    type: "collapse",
+    name: "Tips",
+    key: "tips",
+    icon: <TipsAndUpdatesIcon />,
+    route: "/tips",
+    component: <AdminAuthRoutes>{<Tip></Tip>}</AdminAuthRoutes>,
+  },
+  {
+    routeRole: "admin",
+    type: "collapse",
+    name: "Leaderboard",
+    key: "leaderboard",
+    icon: <LeaderboardOutlinedIcon />,
+    route: "/leaderboard",
+    component: <AdminAuthRoutes>{<Leaderboard></Leaderboard>}</AdminAuthRoutes>,
   },
   {
     routeRole: "admin",
@@ -192,6 +214,22 @@ const authRoutes = [
     type: "authRoutes",
     route: "orders/:id",
     component: <AdminAuthRoutes></AdminAuthRoutes>,
+  },
+  {
+    routeRole: "warehouseManager",
+    type: "authRoutes",
+    route: "rider/:id",
+    component: (
+      <WarehouseManagerAuthRoutes>
+        <RiderOrders></RiderOrders>
+      </WarehouseManagerAuthRoutes>
+    ),
+  },
+  {
+    routeRole: "warehouseManager",
+    type: "authRoutes",
+    route: "orders/:id",
+    component: <WarehouseManagerAuthRoutes></WarehouseManagerAuthRoutes>,
   },
 ];
 export default routes;

@@ -4,18 +4,6 @@ const CLOUD_FUNCTIONS_ORIGIN = "http://localhost:4000";
 // const CLOUD_FUNCTIONS_ORIGIN = "https://saafpakistan.live";
 
 const apiUrl = `${CLOUD_FUNCTIONS_ORIGIN}`;
-//////////////////////////////////////////// Dashboard  /////////////////////////////////////////////////////////////
-
-// export async function getOrders({ userIdToken }) {
-//   const url = `${apiUrl}/admin/dashboard`;
-//   const res = await axios.get(url, {
-//     headers: {
-//       Authorization: `Bearer ${userIdToken}`,
-//     },
-//   });
-//   // console.log("res == ", res.data);
-//   return res.data;
-// }
 
 export async function getStats({ userIdToken }) {
   const url = `${apiUrl}/admin/dashboard`;
@@ -111,16 +99,6 @@ export async function getUserOrders({ userIdToken, id }) {
   return res.data;
 }
 
-export async function getRiderOrders({ userIdToken, id }) {
-  const url = `${apiUrl}/rider/${id}`;
-  const res = await axios.get(url, {
-    headers: {
-      Authorization: `Bearer ${userIdToken}`,
-    },
-  });
-  return res.data;
-}
-
 ////////////////////////////////////////////  Orders  //////////////////////////////////////////////////////////////
 
 export async function deleteOrder({ userIdToken, id, deleteId }) {
@@ -178,6 +156,26 @@ export async function updateRider({ userIdToken, id, data }) {
     },
   });
   // console.log("res == ", res.data);
+  return res.data;
+}
+
+export async function getRiderOrders({ userIdToken, id }) {
+  const url = `${apiUrl}/rider/${id}`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  return res.data;
+}
+
+export async function updateRiderOrder({ userIdToken, id, orderId, data }) {
+  const url = `${apiUrl}/rider/${id}/${orderId}`;
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
   return res.data;
 }
 
@@ -293,6 +291,70 @@ export async function createRecyclable({ userIdToken, data }) {
     },
   });
   // console.log("res == ", res.data);
+  return res.data;
+}
+
+//////////////////////////////////////////////  Tips  //////////////////////////////////////////////////////////
+
+export async function getTipsData({ userIdToken }) {
+  const url = `${apiUrl}/tips`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  return res.data;
+}
+
+export async function deleteTip({ userIdToken, id }) {
+  const url = `${apiUrl}/tips/${id}`;
+  const res = await axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  return res.data;
+}
+
+export async function updatedTip({ userIdToken, id, data }) {
+  const url = `${apiUrl}/tips/${id}`;
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  return res.data;
+}
+
+export async function createTip({ userIdToken, data }) {
+  const url = `${apiUrl}/tips`;
+  const res = await axios.post(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  return res.data;
+}
+
+//////////////////////////////////////////////   Leaderboard  //////////////////////////////////////////////////////////
+
+export async function getLeaderboardData({ userIdToken, type }) {
+  const url = `${apiUrl}/leaderboard?type=${type}`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  return res.data;
+}
+
+export async function updatedLeaderboard({ userIdToken, id, data }) {
+  const url = `${apiUrl}/leaderboard/${id}`;
+  const res = await axios.put(url, data, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
   return res.data;
 }
 

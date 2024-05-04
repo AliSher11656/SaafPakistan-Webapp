@@ -6,6 +6,29 @@ module.exports.getData = async (req, res, next) => {
     const orderCollectionRef = firestore.collection("orders");
     const querySnapshot = await orderCollectionRef.get();
 
+    const leaderboardCollectionRef = firestore.collection("leaderboards");
+    const leaderboardQuerySnapshot = await leaderboardCollectionRef
+      .orderBy("points", "desc")
+      .limit(3)
+      .get();
+
+    let rank = 1;
+    const leaderboardData = [];
+    leaderboardQuerySnapshot.forEach((docSnap) => {
+      const leaderboard = docSnap.data();
+      const leaderboardId = docSnap.id;
+
+      const leaderboardObject = {
+        id: leaderboardId,
+        uid: leaderboard.uid,
+        cus: leaderboard.cus,
+        points: leaderboard.points,
+        rank: rank++,
+      };
+
+      leaderboardData.push(leaderboardObject);
+    });
+
     const ordersData = [];
     const year = new Date().getFullYear();
 
@@ -75,7 +98,11 @@ module.exports.getData = async (req, res, next) => {
       ordersData.push(orderObject);
     });
 
-    res.status(200).json({ orders: ordersData, usersSigned: usersSignedData });
+    res.status(200).json({
+      orders: ordersData,
+      usersSigned: usersSignedData,
+      leaderboard: leaderboardData,
+    });
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: "Internal server error" });

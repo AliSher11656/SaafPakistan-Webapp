@@ -101,7 +101,7 @@ function Riders() {
       })();
     }
     fetchAreasData();
-  }, [user]);
+  }, [user, userIdToken]);
 
   const fetchAreasData = async () => {
     try {
@@ -351,7 +351,9 @@ function Riders() {
               address: rider.address,
               action: (
                 <MDBox display="flex" alignItems="center" ml={-3}>
-                  <Link to={`/rider/${rider.id}?id=${rider.id}`}>
+                  <Link
+                    to={`/rider/${rider.id}?id=${rider.id}&name=${rider.name}`}
+                  >
                     <MDButton variant="gradient" color="success" size="small">
                       Orders
                     </MDButton>

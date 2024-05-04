@@ -148,6 +148,11 @@ module.exports.getRiderOrders = async (req, res, next) => {
           }))
         : [];
 
+      const warehouseManagerOrderVerification =
+        order.warehouseManagerOrderVerification !== undefined
+          ? order.warehouseManagerOrderVerification
+          : 0;
+
       const orderObject = {
         id: orderId,
         orderid: order.orderid,
@@ -160,6 +165,7 @@ module.exports.getRiderOrders = async (req, res, next) => {
         status: order.status,
         totalPrice: order.totalPrice,
         totalWeight: order.totalWeight,
+        warehouseManagerOrderVerification: warehouseManagerOrderVerification,
       };
 
       ordersData.push(orderObject);
@@ -181,6 +187,21 @@ module.exports.deleteOrder = async (req, res, next) => {
     res.status(200).json({ message: "Order deleted successfully" });
   } catch (error) {
     console.error("Error deleting order: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports.updateRiderOrder = async (req, res, next) => {
+  try {
+    const orderId = req.params.orderId;
+    const riderId = req.params.id;
+    const data = req.body;
+
+    await firestore.collection("orders").doc(orderId).update(data);
+
+    res.status(200).json({ message: "Order updated successfully" });
+  } catch (error) {
+    console.error("Error updating order: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

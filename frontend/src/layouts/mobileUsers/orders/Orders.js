@@ -16,11 +16,9 @@ function UserOrders() {
               <MDBox pt={3} px={2}>
                 <MDTypography
                   variant="h6"
-                  fontWeight="medium"
+                  fontWeight="large"
                   sx={{ textAlign: "center" }}
-                >
-                  Orders
-                </MDTypography>
+                ></MDTypography>
               </MDBox>
               <MDBox pt={1} pb={2} px={2}>
                 <MDBox

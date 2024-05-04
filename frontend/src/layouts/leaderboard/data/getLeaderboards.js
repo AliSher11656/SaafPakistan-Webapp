@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import MDButton from "components/MDButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { green } from "@mui/material/colors";
+import PropTypes from "prop-types";
 import * as apiService from "../../api-service";
 import { AuthContext } from "../../../context/AuthContext";
-import MDBox from "components/MDBox";
-import { Icon } from "@mui/material";
-import PropTypes from "prop-types";
 import {
   Box,
   CircularProgress,
@@ -14,30 +14,28 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Icon,
+  IconButton,
   TextField,
   Typography,
+  styled,
 } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import styled from "@mui/system/styled";
-import { green } from "@mui/material/colors";
+import MDBox from "components/MDBox";
 import DataTable from "examples/Tables/DataTable";
-import { Link } from "react-router-dom";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     width: "35em",
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
   },
 }));
-
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
   return (
-    <DialogTitle sx={{ m: 1, mb: 2 }} {...other}>
+    <DialogTitle sx={{ m: 1.5, p: 2 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
@@ -56,87 +54,88 @@ function BootstrapDialogTitle(props) {
     </DialogTitle>
   );
 }
-
 BootstrapDialogTitle.propTypes = {
   children: PropTypes.node,
   onClose: PropTypes.func.isRequired,
 };
 
-function MobileUsers() {
-  const [mobileUsers, setMobileUsers] = useState([]);
-  const [selectedMobileUser, setSelectedMobileUser] = useState({});
+function Leaderboards({ type }) {
+  const [leaderboards, setLeaderboards] = useState([]);
+  const [selectedLeaderboard, setSelectedLeaderboard] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [error2, setError2] = useState("");
-  const [deleteId, setDeleteId] = useState(null);
+  const [error2, setError2] = useState(null);
+  const [deleteById, setDeleteById] = useState(null);
   const { user } = useContext(AuthContext);
   const [deleteAlert, setDeleteAlert] = useState(false);
-  const [mobileUserModal, setMobileUserModal] = useState(false);
-  const mobileUserModalOpen = () => setMobileUserModal(true);
-  const mobileUserModalClose = () => {
-    setMobileUserModal(false);
+  const [leaderboardModal, setLeaderboardModal] = useState(false);
+  const [leaderboardType, setLeaderboardType] = useState(type); // New state for type
+  const deleteAlertOpen = () => setDeleteAlert(true);
+  const deleteAlertClose = () => setDeleteAlert(false);
+  const leaderboardModalOpen = () => setLeaderboardModal(true);
+  const leaderboardModalClose = () => {
+    setLeaderboardModal(false);
     setLoading(false);
     setError2("");
   };
-
-  const deleteAlertOpen = () => setDeleteAlert(true);
-  const deleteAlertClose = () => setDeleteAlert(false);
 
   useEffect(() => {
     if (user && user.getIdToken) {
       (async () => {
         const userIdToken = await user.getIdToken();
         try {
-          const fetchedData = await apiService.getMobileUsersData({
+          const fetchedData = await apiService.getLeaderboardData({
             userIdToken,
+            type: leaderboardType, // Pass the type to the API call
           });
-          setMobileUsers(fetchedData);
+          setLeaderboards(fetchedData);
           setLoading(false);
         } catch (error) {
-          setError("Error fetching mobile users: " + error.message);
+          setError("Error fetching leaderboard data: " + error.message);
           setLoading(false);
         }
       })();
     }
-  }, [user]);
+  }, [user, leaderboardType]);
 
   const handleDelete = async (id) => {
-    if (!user || !user.getIdToken) {
-      return;
-    }
-    const userIdToken = await user.getIdToken();
-    try {
-      await apiService.deleteMobileUser({ userIdToken, id });
-      const updatedMobileUsers = mobileUsers.filter(
-        (mobileUser) => mobileUser.id !== id
-      );
-      setMobileUsers(updatedMobileUsers);
-    } catch (error) {
-      console.error("Error deleting mobile user: ", error);
-    }
+    // if (!user || !user.getIdToken) {
+    //   return;
+    // }
+    // const userIdToken = await user.getIdToken();
+    // try {
+    //   await apiService.deleteLeaderboard({ userIdToken, id });
+    //   const updatedLeaderboards = leaderboards.filter(
+    //     (leaderboard) => leaderboard.id !== id
+    //   );
+    //   setLeaderboards(updatedLeaderboards);
+    // } catch (error) {
+    //   console.error("Error deleting warehouse manager: ", error);
+    // }
   };
 
-  const onUpdateMobileUser = async (e) => {
+  const onUpdateLeaderboard = async (e) => {
     e.preventDefault();
     if (!user || !user.getIdToken) {
       return;
     }
     const userIdToken = await user.getIdToken();
     try {
-      await apiService.updatedMobileUser({
+      await apiService.updatedLeaderboard({
         userIdToken,
-        id: selectedMobileUser.id,
-        data: selectedMobileUser,
+        id: selectedLeaderboard.id,
+        data: selectedLeaderboard,
       });
-      const updatedMobileUsers = mobileUsers.map((mobileUser) =>
-        mobileUser.id === selectedMobileUser.id
-          ? selectedMobileUser
-          : mobileUser
+      const updatedLeaderboards = leaderboards.map((leaderboard) =>
+        leaderboard.id === selectedLeaderboard.id
+          ? selectedLeaderboard
+          : leaderboard
       );
-      setMobileUsers(updatedMobileUsers);
-      mobileUserModalClose();
+      setLeaderboards(updatedLeaderboards);
+      leaderboardModalClose();
     } catch (error) {
-      setError2("Error updating mobile user: " + error.message);
+      console.error("Error updating warehouse manager: ", error);
+      setError2("Error updating warehouse manager: " + error.message);
     }
   };
 
@@ -159,7 +158,7 @@ function MobileUsers() {
             variant="text"
             color={"dark"}
             onClick={() => {
-              setDeleteId(null);
+              setDeleteById(null);
               deleteAlertClose();
             }}
           >
@@ -170,7 +169,7 @@ function MobileUsers() {
             color="error"
             sx={{ color: "error.main" }}
             onClick={() => {
-              handleDelete(deleteId);
+              handleDelete(deleteById);
               deleteAlertClose();
             }}
           >
@@ -178,21 +177,22 @@ function MobileUsers() {
           </MDButton>
         </DialogActions>
       </Dialog>
+
       <BootstrapDialog
-        onClose={mobileUserModalClose}
+        onClose={leaderboardModalClose}
         aria-labelledby="customized-dialog-title"
-        open={mobileUserModal}
+        open={leaderboardModal}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
-          onClose={mobileUserModalClose}
+          onClose={leaderboardModalClose}
         >
           <Typography
             variant="h3"
             color="secondary.main"
             sx={{ pt: 1, textAlign: "center" }}
           >
-            Edit Mobile User
+            Edit Warehouse Manager
           </Typography>
         </BootstrapDialogTitle>
         <DialogContent dividers>
@@ -211,85 +211,63 @@ function MobileUsers() {
             autoComplete="off"
           >
             <TextField
-              label="Name"
-              type="text"
-              color="secondary"
-              required
-              value={selectedMobileUser.name}
-              onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  name: e.target.value,
-                })
-              }
-            />
-            <TextField
-              label="Phone"
+              label="Customer ID"
               type="tel"
               color="secondary"
               required
-              value={selectedMobileUser.phone}
+              disabled
+              value={selectedLeaderboard.uid}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  phone: e.target.value,
+                setSelectedLeaderboard({
+                  ...selectedLeaderboard,
+                  uid: e.target.value,
                 })
               }
             />
             <TextField
-              label="Email"
-              type="email"
+              label="Name"
+              type="cus"
+              disabled
               color="secondary"
               required
-              value={selectedMobileUser.email}
+              value={selectedLeaderboard.cus}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  email: e.target.value,
+                setSelectedLeaderboard({
+                  ...selectedLeaderboard,
+                  cus: e.target.value,
                 })
               }
             />
             <TextField
-              label="Address"
+              label="Rank"
               type="text"
               color="secondary"
               required
-              value={selectedMobileUser.address}
+              disabled
+              value={selectedLeaderboard.rank}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  address: e.target.value,
+                setSelectedLeaderboard({
+                  ...selectedLeaderboard,
+                  rank: e.target.value,
                 })
               }
             />
             <TextField
-              label="Area"
-              type="text"
+              label="Points"
+              type="number"
               color="secondary"
               required
-              value={selectedMobileUser.area}
+              value={selectedLeaderboard.points}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  area: e.target.value,
+                setSelectedLeaderboard({
+                  ...selectedLeaderboard,
+                  points: e.target.value,
                 })
               }
             />
-            <TextField
-              label="Account Type"
-              type="text"
-              color="secondary"
-              required
-              value={selectedMobileUser.accountType}
-              onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  accountType: e.target.value,
-                })
-              }
-            />
-            {error === "" ? null : (
-              <Typography variant="h6" color="error">
+
+            {error2 === "" ? null : (
+              <Typography variant="body2" color="error">
                 {error2}
               </Typography>
             )}
@@ -308,13 +286,14 @@ function MobileUsers() {
               variant="contained"
               color="info"
               type="submit"
-              onClick={onUpdateMobileUser}
+              onClick={onUpdateLeaderboard}
             >
               Update
             </MDButton>
           )}
         </DialogActions>
       </BootstrapDialog>
+
       {loading ? (
         <div
           style={{
@@ -336,56 +315,33 @@ function MobileUsers() {
         <div>Error: {error}</div>
       ) : (
         <DataTable
-          canSearch={true}
           pagination={{ variant: "gradient", color: "info" }}
+          canSearch={true}
           table={{
             columns: [
-              { Header: "Name", accessor: "name", width: "15%" },
-              { Header: "Phone", accessor: "phone", width: "15%" },
-              { Header: "Email", accessor: "email", width: "20%" },
-              { Header: "Address", accessor: "address", width: "20%" },
-              { Header: "Area", accessor: "area", width: "10%" },
-              { Header: "Account Type", accessor: "accountType", width: "15%" },
+              { Header: "Customer ID", accessor: "uid" },
+              { Header: "Name", accessor: "cus" },
+              { Header: "Rank", accessor: "rank" },
+              { Header: "Points", accessor: "points" },
               { Header: "Actions", accessor: "action", align: "center" },
             ],
-            rows: mobileUsers.map((mobileUser) => ({
-              name: mobileUser.name,
-              phone: mobileUser.phone,
-              email: mobileUser.email,
-              address: mobileUser.address,
-              area: mobileUser.area,
-              accountType: mobileUser.accountType,
+            rows: leaderboards.map((leaderboard) => ({
+              uid: leaderboard.uid,
+              cus: leaderboard.cus,
+              rank: leaderboard.rank,
+              points: leaderboard.points,
               action: (
                 <MDBox display="flex" alignItems="center">
-                  <Link
-                    to={`/users/${mobileUser.id}?id=${mobileUser.id}&name=${mobileUser.name}`}
-                  >
-                    <MDButton variant="gradient" color="success" size="small">
-                      Orders
-                    </MDButton>
-                  </Link>
-
-                  <MDBox mr={1} ml={1.5}>
-                    <MDButton
-                      variant="text"
-                      color="error"
-                      onClick={() => {
-                        deleteAlertOpen();
-                        setDeleteId(mobileUser.id);
-                      }}
-                    >
-                      <Icon>delete</Icon>
-                    </MDButton>
-                  </MDBox>
                   <MDButton
                     variant="text"
                     color={"dark"}
                     onClick={() => {
-                      setSelectedMobileUser(mobileUser);
-                      mobileUserModalOpen();
+                      setSelectedLeaderboard(leaderboard);
+                      leaderboardModalOpen();
                     }}
                   >
                     <Icon>edit</Icon>
+                    {/* &nbsp;edit */}
                   </MDButton>
                 </MDBox>
               ),
@@ -397,4 +353,4 @@ function MobileUsers() {
   );
 }
 
-export default MobileUsers;
+export default Leaderboards;

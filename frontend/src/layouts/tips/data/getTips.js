@@ -3,41 +3,39 @@ import { Spinner } from "react-bootstrap";
 import MDButton from "components/MDButton";
 import * as apiService from "../../api-service";
 import { AuthContext } from "../../../context/AuthContext";
-import MDBox from "components/MDBox";
-import { Icon } from "@mui/material";
-import PropTypes from "prop-types";
 import {
-  Box,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField,
+  IconButton,
+  styled,
   Typography,
+  TextField,
+  CircularProgress,
 } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
+import MDBox from "components/MDBox";
+import { Icon } from "@mui/material";
+import PropTypes from "prop-types";
 import CloseIcon from "@mui/icons-material/Close";
-import styled from "@mui/system/styled";
-import { green } from "@mui/material/colors";
+import { Box } from "@mui/system";
 import DataTable from "examples/Tables/DataTable";
-import { Link } from "react-router-dom";
+import { green } from "@mui/material/colors";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     width: "35em",
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
   },
 }));
-
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
   return (
-    <DialogTitle sx={{ m: 1, mb: 2 }} {...other}>
+    <DialogTitle sx={{ m: 1.5, p: 2 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
@@ -56,49 +54,47 @@ function BootstrapDialogTitle(props) {
     </DialogTitle>
   );
 }
-
 BootstrapDialogTitle.propTypes = {
   children: PropTypes.node,
   onClose: PropTypes.func.isRequired,
 };
 
-function MobileUsers() {
-  const [mobileUsers, setMobileUsers] = useState([]);
-  const [selectedMobileUser, setSelectedMobileUser] = useState({});
+function Tips({ refreshTips }) {
+  const [tips, setTips] = useState([]);
+  const [selectedTip, setSelectedTip] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [error2, setError2] = useState("");
-  const [deleteId, setDeleteId] = useState(null);
+  const [error2, setError2] = useState(null);
+  const [deleteById, setDeleteById] = useState(null);
   const { user } = useContext(AuthContext);
   const [deleteAlert, setDeleteAlert] = useState(false);
-  const [mobileUserModal, setMobileUserModal] = useState(false);
-  const mobileUserModalOpen = () => setMobileUserModal(true);
-  const mobileUserModalClose = () => {
-    setMobileUserModal(false);
+  const [TipModal, setTipModal] = useState(false);
+  const deleteAlertOpen = () => setDeleteAlert(true);
+  const deleteAlertClose = () => setDeleteAlert(false);
+  const TipModalOpen = () => setTipModal(true);
+  const TipModalClose = () => {
+    setTipModal(false);
     setLoading(false);
     setError2("");
   };
-
-  const deleteAlertOpen = () => setDeleteAlert(true);
-  const deleteAlertClose = () => setDeleteAlert(false);
 
   useEffect(() => {
     if (user && user.getIdToken) {
       (async () => {
         const userIdToken = await user.getIdToken();
         try {
-          const fetchedData = await apiService.getMobileUsersData({
+          const fetchedData = await apiService.getTipsData({
             userIdToken,
           });
-          setMobileUsers(fetchedData);
+          setTips(fetchedData);
           setLoading(false);
         } catch (error) {
-          setError("Error fetching mobile users: " + error.message);
+          setError("Error fetching tips: " + error.message);
           setLoading(false);
         }
       })();
     }
-  }, [user]);
+  }, [user, refreshTips]); // Add refreshTips to the dependency array
 
   const handleDelete = async (id) => {
     if (!user || !user.getIdToken) {
@@ -106,37 +102,34 @@ function MobileUsers() {
     }
     const userIdToken = await user.getIdToken();
     try {
-      await apiService.deleteMobileUser({ userIdToken, id });
-      const updatedMobileUsers = mobileUsers.filter(
-        (mobileUser) => mobileUser.id !== id
-      );
-      setMobileUsers(updatedMobileUsers);
+      await apiService.deleteTip({ userIdToken, id });
+      const updatedTips = tips.filter((Tip) => Tip.id !== id);
+      setTips(updatedTips);
     } catch (error) {
-      console.error("Error deleting mobile user: ", error);
+      console.error("Error deleting tip: ", error);
     }
   };
 
-  const onUpdateMobileUser = async (e) => {
+  const onUpdateTip = async (e) => {
     e.preventDefault();
     if (!user || !user.getIdToken) {
       return;
     }
     const userIdToken = await user.getIdToken();
     try {
-      await apiService.updatedMobileUser({
+      await apiService.updatedTip({
         userIdToken,
-        id: selectedMobileUser.id,
-        data: selectedMobileUser,
+        id: selectedTip.id,
+        data: selectedTip,
       });
-      const updatedMobileUsers = mobileUsers.map((mobileUser) =>
-        mobileUser.id === selectedMobileUser.id
-          ? selectedMobileUser
-          : mobileUser
+      const updatedTips = tips.map((Tip) =>
+        Tip.id === selectedTip.id ? selectedTip : Tip
       );
-      setMobileUsers(updatedMobileUsers);
-      mobileUserModalClose();
+      setTips(updatedTips);
+      TipModalClose();
     } catch (error) {
-      setError2("Error updating mobile user: " + error.message);
+      console.error("Error updating tip: ", error);
+      setError2("Error updating tip: " + error.message);
     }
   };
 
@@ -159,7 +152,7 @@ function MobileUsers() {
             variant="text"
             color={"dark"}
             onClick={() => {
-              setDeleteId(null);
+              setDeleteById(null);
               deleteAlertClose();
             }}
           >
@@ -170,7 +163,7 @@ function MobileUsers() {
             color="error"
             sx={{ color: "error.main" }}
             onClick={() => {
-              handleDelete(deleteId);
+              handleDelete(deleteById);
               deleteAlertClose();
             }}
           >
@@ -178,21 +171,22 @@ function MobileUsers() {
           </MDButton>
         </DialogActions>
       </Dialog>
+
       <BootstrapDialog
-        onClose={mobileUserModalClose}
+        onClose={TipModalClose}
         aria-labelledby="customized-dialog-title"
-        open={mobileUserModal}
+        open={TipModal}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
-          onClose={mobileUserModalClose}
+          onClose={TipModalClose}
         >
           <Typography
             variant="h3"
             color="secondary.main"
             sx={{ pt: 1, textAlign: "center" }}
           >
-            Edit Mobile User
+            Edit tip
           </Typography>
         </BootstrapDialogTitle>
         <DialogContent dividers>
@@ -211,85 +205,34 @@ function MobileUsers() {
             autoComplete="off"
           >
             <TextField
-              label="Name"
+              label="Title"
               type="text"
               color="secondary"
               required
-              value={selectedMobileUser.name}
+              value={selectedTip.title}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  name: e.target.value,
+                setSelectedTip({
+                  ...selectedTip,
+                  title: e.target.value,
                 })
               }
             />
             <TextField
-              label="Phone"
-              type="tel"
-              color="secondary"
-              required
-              value={selectedMobileUser.phone}
-              onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  phone: e.target.value,
-                })
-              }
-            />
-            <TextField
-              label="Email"
-              type="email"
-              color="secondary"
-              required
-              value={selectedMobileUser.email}
-              onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  email: e.target.value,
-                })
-              }
-            />
-            <TextField
-              label="Address"
+              label="Description"
               type="text"
               color="secondary"
               required
-              value={selectedMobileUser.address}
+              value={selectedTip.description}
               onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  address: e.target.value,
+                setSelectedTip({
+                  ...selectedTip,
+                  description: e.target.value,
                 })
               }
             />
-            <TextField
-              label="Area"
-              type="text"
-              color="secondary"
-              required
-              value={selectedMobileUser.area}
-              onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  area: e.target.value,
-                })
-              }
-            />
-            <TextField
-              label="Account Type"
-              type="text"
-              color="secondary"
-              required
-              value={selectedMobileUser.accountType}
-              onChange={(e) =>
-                setSelectedMobileUser({
-                  ...selectedMobileUser,
-                  accountType: e.target.value,
-                })
-              }
-            />
-            {error === "" ? null : (
-              <Typography variant="h6" color="error">
+
+            {error2 === "" ? null : (
+              <Typography variant="body2" color="error">
                 {error2}
               </Typography>
             )}
@@ -308,13 +251,14 @@ function MobileUsers() {
               variant="contained"
               color="info"
               type="submit"
-              onClick={onUpdateMobileUser}
+              onClick={onUpdateTip}
             >
               Update
             </MDButton>
           )}
         </DialogActions>
       </BootstrapDialog>
+
       {loading ? (
         <div
           style={{
@@ -336,42 +280,26 @@ function MobileUsers() {
         <div>Error: {error}</div>
       ) : (
         <DataTable
-          canSearch={true}
           pagination={{ variant: "gradient", color: "info" }}
+          canSearch={true}
           table={{
             columns: [
-              { Header: "Name", accessor: "name", width: "15%" },
-              { Header: "Phone", accessor: "phone", width: "15%" },
-              { Header: "Email", accessor: "email", width: "20%" },
-              { Header: "Address", accessor: "address", width: "20%" },
-              { Header: "Area", accessor: "area", width: "10%" },
-              { Header: "Account Type", accessor: "accountType", width: "15%" },
+              { Header: "Title", accessor: "title", width: "25%" },
+              { Header: "Description", accessor: "description", width: "35%" },
               { Header: "Actions", accessor: "action", align: "center" },
             ],
-            rows: mobileUsers.map((mobileUser) => ({
-              name: mobileUser.name,
-              phone: mobileUser.phone,
-              email: mobileUser.email,
-              address: mobileUser.address,
-              area: mobileUser.area,
-              accountType: mobileUser.accountType,
+            rows: tips.map((Tip) => ({
+              title: Tip.title,
+              description: Tip.description,
               action: (
                 <MDBox display="flex" alignItems="center">
-                  <Link
-                    to={`/users/${mobileUser.id}?id=${mobileUser.id}&name=${mobileUser.name}`}
-                  >
-                    <MDButton variant="gradient" color="success" size="small">
-                      Orders
-                    </MDButton>
-                  </Link>
-
-                  <MDBox mr={1} ml={1.5}>
+                  <MDBox mr={1}>
                     <MDButton
                       variant="text"
                       color="error"
                       onClick={() => {
                         deleteAlertOpen();
-                        setDeleteId(mobileUser.id);
+                        setDeleteById(Tip.id);
                       }}
                     >
                       <Icon>delete</Icon>
@@ -381,8 +309,8 @@ function MobileUsers() {
                     variant="text"
                     color={"dark"}
                     onClick={() => {
-                      setSelectedMobileUser(mobileUser);
-                      mobileUserModalOpen();
+                      setSelectedTip(Tip);
+                      TipModalOpen();
                     }}
                   >
                     <Icon>edit</Icon>
@@ -397,4 +325,8 @@ function MobileUsers() {
   );
 }
 
-export default MobileUsers;
+Tips.propTypes = {
+  refreshTips: PropTypes.bool.isRequired,
+};
+
+export default Tips;

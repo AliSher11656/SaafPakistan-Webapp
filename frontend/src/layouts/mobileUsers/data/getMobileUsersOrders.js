@@ -20,6 +20,7 @@ function GetMobileUsersOrders() {
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const id = new URLSearchParams(location.search).get("id");
+  const name = new URLSearchParams(location.search).get("name");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteAlert, setDeleteAlert] = useState(false);
@@ -68,9 +69,11 @@ function GetMobileUsersOrders() {
       case 0:
         return "Pending";
       case 1:
+        return "Cancelled";
+      case 2:
         return "Completed";
       case 3:
-        return "Cancelled";
+        return "In Process";
       default:
         return "Unknown";
     }
@@ -152,79 +155,88 @@ function GetMobileUsersOrders() {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <DataTable
-          isSorted={true}
-          canSearch={true}
-          pagination={{ variant: "gradient", color: "info" }}
-          table={{
-            columns: [
-              {
-                Header: "Order ID",
-                accessor: "orderId",
-                width: "10%",
-              },
-              {
-                Header: "Order Date",
-                accessor: "orderDate",
-                width: "12%",
-              },
-              {
-                Header: "Items",
-                accessor: "items",
-                width: "30%",
-              },
-              {
-                Header: "Total Price",
-                accessor: "totalPrice",
-                width: "10%",
-              },
-              {
-                Header: "Total Weight",
-                accessor: "totalWeight",
-                width: "10%",
-              },
-              {
-                Header: "Status",
-                accessor: "status",
-                width: "15%",
-                Cell: ({ value }) => (
-                  <MDTypography color={getStatusColor(value)} variant="body2">
-                    {value}
-                  </MDTypography>
+        <>
+          <MDTypography
+            variant="h5"
+            fontWeight="medium"
+            sx={{ textAlign: "center" }}
+          >
+            Orders placed by : {name}
+          </MDTypography>
+          <DataTable
+            isSorted={true}
+            canSearch={true}
+            pagination={{ variant: "gradient", color: "info" }}
+            table={{
+              columns: [
+                {
+                  Header: "Order ID",
+                  accessor: "orderId",
+                  width: "10%",
+                },
+                {
+                  Header: "Order Date",
+                  accessor: "orderDate",
+                  width: "12%",
+                },
+                {
+                  Header: "Items",
+                  accessor: "items",
+                  width: "30%",
+                },
+                {
+                  Header: "Total Price",
+                  accessor: "totalPrice",
+                  width: "10%",
+                },
+                {
+                  Header: "Total Weight",
+                  accessor: "totalWeight",
+                  width: "10%",
+                },
+                {
+                  Header: "Status",
+                  accessor: "status",
+                  width: "15%",
+                  Cell: ({ value }) => (
+                    <MDTypography color={getStatusColor(value)} variant="body2">
+                      {value}
+                    </MDTypography>
+                  ),
+                },
+                {
+                  Header: "Actions",
+                  accessor: "action",
+                  align: "center",
+                  width: "5%",
+                },
+              ],
+              rows: orders.map((order) => ({
+                orderId: order.orderid,
+                orderDate: formatDate(order.orderDate),
+                items: order.recyclables
+                  .filter((item) => item.quantity > 0)
+                  .map((item) => `${item.quantity}kg ${item.item}`)
+                  .join(", "),
+                totalPrice: order.totalPrice,
+                totalWeight: order.totalWeight,
+                status: getStatusLabel(order.status),
+                action: (
+                  <MDButton
+                    variant="text"
+                    color="error"
+                    onClick={() => {
+                      deleteAlertOpen();
+                      setDeleteId(order.id);
+                    }}
+                  >
+                    <Icon>delete</Icon>
+                  </MDButton>
                 ),
-              },
-              {
-                Header: "Actions",
-                accessor: "action",
-                align: "center",
-                width: "5%",
-              },
-            ],
-            rows: orders.map((order) => ({
-              orderId: order.orderid,
-              orderDate: formatDate(order.orderDate),
-              items: order.recyclables
-                .filter((item) => item.quantity > 0)
-                .map((item) => `${item.quantity}kg ${item.item}`)
-                .join(", "),
-              totalPrice: order.totalPrice,
-              totalWeight: order.totalWeight,
-              status: getStatusLabel(order.status),
-              action: (
-                <MDButton
-                  variant="text"
-                  color="error"
-                  onClick={() => {
-                    deleteAlertOpen();
-                    setDeleteId(order.id);
-                  }}
-                >
-                  <Icon>delete</Icon>
-                </MDButton>
-              ),
-            })),
-          }}
-        />
+              })),
+            }}
+          />
+        </>
       )}
     </>
   );

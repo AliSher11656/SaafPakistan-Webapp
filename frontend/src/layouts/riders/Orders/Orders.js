@@ -18,9 +18,7 @@ function RiderOrders() {
                   variant="h6"
                   fontWeight="medium"
                   sx={{ textAlign: "center" }}
-                >
-                  Orders
-                </MDTypography>
+                ></MDTypography>
               </MDBox>
               <MDBox pt={1} pb={2} px={2}>
                 <MDBox

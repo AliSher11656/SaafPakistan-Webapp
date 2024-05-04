@@ -147,9 +147,11 @@ function Orders() {
       case 0:
         return "Pending";
       case 1:
+        return "Cancelled";
+      case 2:
         return "Completed";
       case 3:
-        return "Cancelled";
+        return "In Process";
       default:
         return "Unknown";
     }

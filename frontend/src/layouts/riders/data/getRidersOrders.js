@@ -14,16 +14,20 @@ import {
   DialogTitle,
   Icon,
 } from "@mui/material";
+import TouchAppIcon from "@mui/icons-material/TouchApp";
 
 function GetRidersOrders() {
   const [orders, setOrders] = useState([]);
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const id = new URLSearchParams(location.search).get("id");
+  const riderName = new URLSearchParams(location.search).get("name");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteAlert, setDeleteAlert] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [Verified, setVerified] = useState(false);
+  const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
 
   const deleteAlertOpen = () => setDeleteAlert(true);
   const deleteAlertClose = () => setDeleteAlert(false);
@@ -61,14 +65,46 @@ function GetRidersOrders() {
     }
   };
 
+  const updateRiderOrder = async (orderId, currentStatus) => {
+    if (!user || !user.getIdToken) {
+      return;
+    }
+    const userIdToken = await user.getIdToken();
+    try {
+      const data = {
+        warehouseManagerOrderVerification: currentStatus ? 0 : 1, // Toggle the status
+      };
+      await apiService.updateRiderOrder({ userIdToken, id, orderId, data });
+
+      const updatedOrders = orders.map((order) => {
+        if (order.id === orderId) {
+          return {
+            ...order,
+            warehouseManagerOrderVerification:
+              data.warehouseManagerOrderVerification,
+          };
+        }
+        return order;
+      });
+      setOrders(updatedOrders);
+
+      // Update the Verified state for the specific order
+      const newVerified = !currentStatus;
+      setVerified(newVerified);
+    } catch (error) {
+      console.error("Error updating rider order: ", error);
+    }
+  };
   const getStatusLabel = (status) => {
     switch (status) {
       case 0:
         return "Pending";
       case 1:
+        return "Cancelled";
+      case 2:
         return "Completed";
       case 3:
-        return "Cancelled";
+        return "In Process";
       default:
         return "Unknown";
     }
@@ -130,6 +166,32 @@ function GetRidersOrders() {
           </MDButton>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+        open={verifyDialogOpen}
+        onClose={() => setVerifyDialogOpen(false)}
+        aria-labelledby="verify-dialog-title"
+        aria-describedby="verify-dialog-description"
+      >
+        <DialogTitle id="verify-dialog-title">
+          {"Verification Alert"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="verify-dialog-description">
+            This order must be completed first to be verified.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <MDButton
+            variant="outlined"
+            color="primary"
+            onClick={() => setVerifyDialogOpen(false)}
+          >
+            OK
+          </MDButton>
+        </DialogActions>
+      </Dialog>
+
       {loading ? (
         <div
           style={{
@@ -150,77 +212,119 @@ function GetRidersOrders() {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <DataTable
-          isSorted={true}
-          canSearch={true}
-          pagination={{ variant: "gradient", color: "info" }}
-          table={{
-            columns: [
-              {
-                Header: "Customer ID",
-                accessor: "customerId",
-              },
-              {
-                Header: "Order ID",
-                accessor: "orderId",
-              },
-              {
-                Header: "Order Date",
-                accessor: "orderDate",
-              },
-              {
-                Header: "Items",
-                accessor: "items",
-              },
-              {
-                Header: "Total Price",
-                accessor: "totalPrice",
-              },
-              {
-                Header: "Total Weight",
-                accessor: "totalWeight",
-              },
-              {
-                Header: "Status",
-                accessor: "status",
-                Cell: ({ value }) => (
-                  <MDTypography color={getStatusColor(value)} variant="body2">
-                    {value}
-                  </MDTypography>
+        <>
+          <MDTypography
+            variant="h5"
+            fontWeight="medium"
+            sx={{ textAlign: "center" }}
+          >
+            Orders Assigned to Rider: {riderName}
+          </MDTypography>
+          <DataTable
+            isSorted={true}
+            canSearch={true}
+            pagination={{ variant: "gradient", color: "info" }}
+            table={{
+              columns: [
+                {
+                  Header: "Customer ID",
+                  accessor: "customerId",
+                },
+                {
+                  Header: "Order ID",
+                  accessor: "orderId",
+                },
+                {
+                  Header: "Order Date",
+                  accessor: "orderDate",
+                },
+                {
+                  Header: "Items",
+                  accessor: "items",
+                },
+                {
+                  Header: "Total Price",
+                  accessor: "totalPrice",
+                },
+                {
+                  Header: "Total Weight",
+                  accessor: "totalWeight",
+                },
+                {
+                  Header: "Order Status",
+                  accessor: "status",
+                  Cell: ({ value }) => (
+                    <MDTypography color={getStatusColor(value)} variant="body2">
+                      {value}
+                    </MDTypography>
+                  ),
+                },
+
+                {
+                  Header: "Actions",
+                  accessor: "action",
+                  align: "center",
+                },
+              ],
+              rows: orders.map((order) => ({
+                customerId: order.customer,
+                orderId: order.orderid,
+                orderDate: formatDate(order.orderDate),
+                items: order.recyclables
+                  .filter((item) => item.quantity > 0)
+                  .map((item) => `${item.quantity}kg ${item.item}`)
+                  .join(", "),
+                totalPrice: order.totalPrice,
+                totalWeight: order.totalWeight,
+                status: getStatusLabel(order.status),
+
+                action: (
+                  <>
+                    <MDButton
+                      variant="text"
+                      color="error"
+                      onClick={() => {
+                        deleteAlertOpen();
+                        setDeleteId(order.id);
+                      }}
+                    >
+                      <Icon>delete</Icon>
+                    </MDButton>
+                    <MDButton
+                      variant="outlined"
+                      color={
+                        order.warehouseManagerOrderVerification === 1
+                          ? "success"
+                          : "error"
+                      }
+                      onClick={() => {
+                        if (order.status === 2) {
+                          // Check if order status is "Completed"
+                          setVerified(
+                            order.warehouseManagerOrderVerification === 0
+                              ? false
+                              : true
+                          );
+                          updateRiderOrder(
+                            order.id,
+                            order.warehouseManagerOrderVerification
+                          );
+                        } else {
+                          setVerifyDialogOpen(true); // Open dialog if order status is not "Completed"
+                        }
+                      }}
+                    >
+                      {order.warehouseManagerOrderVerification === 1
+                        ? "Verified"
+                        : "Unverified"}
+                      <TouchAppIcon />
+                    </MDButton>
+                  </>
                 ),
-              },
-              {
-                Header: "Actions",
-                accessor: "action",
-                align: "center",
-              },
-            ],
-            rows: orders.map((order) => ({
-              customerId: order.customer,
-              orderId: order.orderid,
-              orderDate: formatDate(order.orderDate),
-              items: order.recyclables
-                .filter((item) => item.quantity > 0)
-                .map((item) => `${item.quantity}kg ${item.item}`)
-                .join(", "),
-              totalPrice: order.totalPrice,
-              totalWeight: order.totalWeight,
-              status: getStatusLabel(order.status),
-              action: (
-                <MDButton
-                  variant="text"
-                  color="error"
-                  onClick={() => {
-                    deleteAlertOpen();
-                    setDeleteId(order.id);
-                  }}
-                >
-                  <Icon>delete</Icon>
-                </MDButton>
-              ),
-            })),
-          }}
-        />
+              })),
+            }}
+          />
+        </>
       )}
     </>
   );

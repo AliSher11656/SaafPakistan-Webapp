@@ -34,6 +34,8 @@ const areaRoutes = require("./routes/areaRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const recyclableRoutes = require("./routes/recyclablesRoutes");
 const statsRoutes = require("./routes/statsRoutes");
+const tipsRoutes = require("./routes/tipsRoutes");
+const leaderboardRoutes = require("./routes/leaderboardsRoutes");
 
 const PORT = process.env.PORT || 4000; // backend routing port
 app.listen(PORT, () => {
@@ -49,5 +51,7 @@ app.use("/", areaRoutes);
 app.use("/", orderRoutes);
 app.use("/", recyclableRoutes);
 app.use("/", statsRoutes);
+app.use("/", tipsRoutes);
+app.use("/", leaderboardRoutes);
 
 exports.api = functions.https.onRequest(app);

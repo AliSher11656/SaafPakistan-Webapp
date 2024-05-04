@@ -10,6 +10,7 @@ import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import { Link } from "react-router-dom";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
+import MDTypography from "components/MDTypography";
 
 function Dashboard() {
   const [numberOfOrders, setNumberOfOrders] = React.useState(0);
@@ -29,6 +30,7 @@ function Dashboard() {
     labels: [],
     datasets: { label: "", data: [] },
   });
+  const [leaderboardData, setLeaderboardData] = React.useState([]);
 
   function getLastThirtyDaysStartDate() {
     const today = new Date();
@@ -54,13 +56,14 @@ function Dashboard() {
           const last30days = new Date();
           last30days.setDate(last30days.getDate() - 29);
 
-          // Check if the order date is within the last seven days
           return new Date(order.orderDate) >= last30days;
         });
 
-        // Continue processing orders data
         const usersSignedData = Data.usersSigned;
         setUsersSignedData(usersSignedData);
+
+        const leaderboardData = Data.leaderboard;
+        setLeaderboardData(leaderboardData);
 
         const numberOfOrders = orders.length;
         setNumberOfOrders(numberOfOrders);
@@ -182,6 +185,18 @@ function Dashboard() {
                   chart={recyclablesChartData}
                 />
               </MDBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <DefaultInfoCard
+                icon="leaderboard"
+                title="Leaderboard"
+                description="Top 3 Individuals with highest points"
+                value={leaderboardData.map((user, index) => (
+                  <MDTypography fontweight="light">
+                    {user.rank}. {user.cus} - {user.points} points
+                  </MDTypography>
+                ))}
+              />
             </Grid>
           </Grid>
         </MDBox>
