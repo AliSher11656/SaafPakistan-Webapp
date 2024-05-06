@@ -170,6 +170,10 @@ function Orders() {
         return "error";
       case "Pending":
         return "warning";
+      case "Paid":
+        return "success";
+      case "unPaid":
+        return "error";
       default:
         return "";
     }
@@ -393,8 +397,17 @@ function Orders() {
                 accessor: "totalWeight",
               },
               {
-                Header: "Status",
+                Header: "Order Status",
                 accessor: "status",
+                Cell: ({ value }) => (
+                  <MDTypography color={getStatusColor(value)} variant="body2">
+                    {value}
+                  </MDTypography>
+                ),
+              },
+              {
+                Header: "Payment Status",
+                accessor: "paymentStatus",
                 Cell: ({ value }) => (
                   <MDTypography color={getStatusColor(value)} variant="body2">
                     {value}
@@ -419,6 +432,7 @@ function Orders() {
               totalPrice: order.totalPrice,
               totalWeight: order.totalWeight,
               status: getStatusLabel(order.status),
+              paymentStatus: order.paymentStatus,
               action: (
                 <MDButton
                   variant="text"

@@ -123,6 +123,52 @@ export async function getOrders({ userIdToken, id }) {
   return res.data;
 }
 
+//////////////////////////////////////////// Payemnt ///////////////////////////////////////////////////////////////
+
+export async function getPayments({ userIdToken }) {
+  const url = `${apiUrl}/payment`;
+  const res = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${userIdToken}`,
+    },
+  });
+  return res.data;
+}
+
+export async function uploadPaymentProof({ userIdToken, data, file }) {
+  try {
+    const url = `${apiUrl}/payment`; // Assuming apiUrl is defined elsewhere
+
+    // Create a new payload object
+    const payload = new FormData();
+
+    // Append JSON data to payload
+    for (const key in data) {
+      payload.append(key, data[key]);
+    }
+
+    // Append file to payload
+    payload.append("file", file);
+
+    const res = await axios.post(url, payload, {
+      headers: {
+        Authorization: `Bearer ${userIdToken}`,
+        userId: data.userId,
+        amount: data.amount,
+        method: data.method,
+        orderDocid: data.orderDocid,
+        "Content-Type": "multipart/form-data", // Don't forget this
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    // Handle any errors that occur during the request
+    console.error("Error uploading payment proof:", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
 ////////////////////////////////////////////  Riders  //////////////////////////////////////////////////////////////
 
 export async function getRidersData({ userIdToken }) {

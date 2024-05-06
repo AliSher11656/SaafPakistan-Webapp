@@ -12,6 +12,7 @@ import RecyclingIcon from "@mui/icons-material/Recycling";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import LeaderboardOutlinedIcon from "@mui/icons-material/LeaderboardOutlined";
+import PaymentsIcon from "@mui/icons-material/Payments";
 
 import * as React from "react";
 import { Navigate } from "react-router-dom";
@@ -28,6 +29,7 @@ import RiderOrders from "layouts/riders/Orders/Orders";
 import Order from "layouts/orders";
 import Tip from "layouts/tips";
 import Leaderboard from "layouts/leaderboard";
+import Payment from "layouts/payment";
 
 const AdminAuthRoutes = ({ children }) => {
   const { role } = useContext(AuthContext);
@@ -113,6 +115,15 @@ const routes = [
     icon: <ListAltIcon />,
     route: "/orders",
     component: <AdminAuthRoutes>{<Order></Order>}</AdminAuthRoutes>,
+  },
+  {
+    routeRole: "admin",
+    type: "collapse",
+    name: "Payment",
+    key: "payment",
+    icon: <PaymentsIcon />,
+    route: "/payment",
+    component: <AdminAuthRoutes>{<Payment></Payment>}</AdminAuthRoutes>,
   },
   {
     routeRole: "admin",

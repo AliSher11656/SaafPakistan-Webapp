@@ -22,6 +22,9 @@ module.exports.getOrders = async (req, res, next) => {
             quantity: item.quantity,
           }))
         : [];
+      const paymentStatus = order.paymentStatus
+        ? order.paymentStatus
+        : "unPaid";
 
       const orderObject = {
         orderId: orderId,
@@ -35,6 +38,7 @@ module.exports.getOrders = async (req, res, next) => {
         status: order.status,
         totalPrice: order.totalPrice,
         totalWeight: order.totalWeight,
+        paymentStatus: paymentStatus,
       };
 
       if (statusId === undefined || statusId === order.status.toString()) {
