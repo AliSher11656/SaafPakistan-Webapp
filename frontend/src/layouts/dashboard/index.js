@@ -37,6 +37,10 @@ function Dashboard() {
     datasets: { label: "", data: [] },
   });
 
+  const totalAmountPaid = paymentData.datasets.data.reduce(
+    (total, amount) => total + amount,
+    0
+  );
   const paymentChartData = {
     labels: [
       "Jan",
@@ -214,11 +218,17 @@ function Dashboard() {
                 <VerticalBarChart
                   icon={{ color: "success", component: "leaderboard" }}
                   title="Payment statistics by month"
-                  description="Total amount paid to customers in the last 12 months. Total ="
+                  description={
+                    <>
+                      Total amount paid to customers in the last 12 months.{" "}
+                      <strong>Total = {totalAmountPaid} PKR</strong>
+                    </>
+                  }
                   chart={paymentChartData}
                 />
               </MDBox>
             </Grid>
+
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={3}>
                 <ReportsBarChart
