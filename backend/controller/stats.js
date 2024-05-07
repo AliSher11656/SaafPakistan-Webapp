@@ -6,28 +6,8 @@ module.exports.getData = async (req, res, next) => {
     const orderCollectionRef = firestore.collection("orders");
     const querySnapshot = await orderCollectionRef.get();
 
-    const leaderboardCollectionRef = firestore.collection("leaderboards");
-    const leaderboardQuerySnapshot = await leaderboardCollectionRef
-      .orderBy("points", "desc")
-      .limit(3)
-      .get();
-
-    let rank = 1;
-    const leaderboardData = [];
-    leaderboardQuerySnapshot.forEach((docSnap) => {
-      const leaderboard = docSnap.data();
-      const leaderboardId = docSnap.id;
-
-      const leaderboardObject = {
-        id: leaderboardId,
-        uid: leaderboard.uid,
-        cus: leaderboard.cus,
-        points: leaderboard.points,
-        rank: rank++,
-      };
-
-      leaderboardData.push(leaderboardObject);
-    });
+    const paymentCollectionRef = firestore.collection("payments");
+    const paymentQuerySnapshot = await paymentCollectionRef.get();
 
     const ordersData = [];
     const year = new Date().getFullYear();
@@ -49,6 +29,45 @@ module.exports.getData = async (req, res, next) => {
       ],
       datasets: { label: "User Signups", data: [] },
     };
+
+    const paymentData = {
+      labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+      datasets: { label: "Paid Amount", data: [] },
+    };
+
+    // Iterate over each month for payment stats
+    for (let month = 0; month < 12; month++) {
+      const startOfMonth = new Date(year, month, 1);
+      const endOfMonth = new Date(year, month + 1, 0);
+
+      // Filter payments made during the current month
+      const paymentsThisMonth = paymentQuerySnapshot.docs.filter((payment) => {
+        const paymentDate = new Date(payment.data().createdAt);
+        return paymentDate >= startOfMonth && paymentDate <= endOfMonth;
+      });
+
+      // Calculate total amount paid during the current month
+      const totalAmount = paymentsThisMonth.reduce((total, payment) => {
+        const amount = parseFloat(payment.data().amount);
+        return total + amount;
+      }, 0);
+
+      // Push total amount paid during the current month to datasets
+      paymentData.datasets.data.push(totalAmount);
+    }
 
     // Fetch all users
     const listUsersResult = await admin.auth().listUsers();
@@ -101,7 +120,7 @@ module.exports.getData = async (req, res, next) => {
     res.status(200).json({
       orders: ordersData,
       usersSigned: usersSignedData,
-      leaderboard: leaderboardData,
+      paymentStats: paymentData,
     });
   } catch (error) {
     console.error("Error fetching data:", error);

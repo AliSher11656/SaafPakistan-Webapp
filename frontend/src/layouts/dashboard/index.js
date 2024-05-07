@@ -11,6 +11,7 @@ import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import { Link } from "react-router-dom";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import MDTypography from "components/MDTypography";
+import VerticalBarChart from "examples/Charts/BarCharts/VerticalBarChart";
 
 function Dashboard() {
   const [numberOfOrders, setNumberOfOrders] = React.useState(0);
@@ -30,7 +31,35 @@ function Dashboard() {
     labels: [],
     datasets: { label: "", data: [] },
   });
-  const [leaderboardData, setLeaderboardData] = React.useState([]);
+
+  const [paymentData, setPaymentData] = React.useState({
+    labels: [],
+    datasets: { label: "", data: [] },
+  });
+
+  const paymentChartData = {
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+    datasets: [
+      {
+        label: "Paid Amount",
+        color: "success",
+        data: paymentData.datasets.data,
+      },
+    ],
+  };
 
   function getLastThirtyDaysStartDate() {
     const today = new Date();
@@ -62,11 +91,16 @@ function Dashboard() {
         const usersSignedData = Data.usersSigned;
         setUsersSignedData(usersSignedData);
 
-        const leaderboardData = Data.leaderboard;
-        setLeaderboardData(leaderboardData);
-
         const numberOfOrders = orders.length;
         setNumberOfOrders(numberOfOrders);
+
+        const paymentData = Data.paymentStats;
+        setPaymentData(paymentData);
+
+        const totalAmountPaid = paymentData.datasets.data.reduce(
+          (total, amount) => total + amount,
+          0
+        );
 
         const counts = orders.reduce(
           (acc, order) => {
@@ -177,6 +211,16 @@ function Dashboard() {
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={3}>
+                <VerticalBarChart
+                  icon={{ color: "success", component: "leaderboard" }}
+                  title="Payment statistics by month"
+                  description="Total amount paid to customers in the last 12 months. Total ="
+                  chart={paymentChartData}
+                />
+              </MDBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <MDBox mb={3}>
                 <ReportsBarChart
                   color="success"
                   title="Recyclable Items"
@@ -185,18 +229,6 @@ function Dashboard() {
                   chart={recyclablesChartData}
                 />
               </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <DefaultInfoCard
-                icon="leaderboard"
-                title="Leaderboard"
-                description="Top 3 Individuals with highest points"
-                value={leaderboardData.map((user, index) => (
-                  <MDTypography fontweight="light">
-                    {user.rank}. {user.cus} - {user.points} points
-                  </MDTypography>
-                ))}
-              />
             </Grid>
           </Grid>
         </MDBox>

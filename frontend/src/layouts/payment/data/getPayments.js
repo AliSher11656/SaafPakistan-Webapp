@@ -163,11 +163,12 @@ function Payments() {
       });
       if (uploadResult) {
         // Update the payment status to Paid if upload is successful
-        const updatedPayment = { ...payment, paymentStatus: "Paid" };
-        setPayment(updatedPayment);
-        const updatedPayments = payments.map((p) =>
-          p.id === updatedPayment.id ? updatedPayment : p
-        );
+        const updatedPayments = payments.map((p) => {
+          if (p.orderDocid === payment.orderDocid) {
+            return { ...p, paymentStatus: "Paid" }; // Update status only for the selected payment
+          }
+          return p; // Return other payments as they are
+        });
         setPayments(updatedPayments);
         paymentsSaleModalClose();
       }
