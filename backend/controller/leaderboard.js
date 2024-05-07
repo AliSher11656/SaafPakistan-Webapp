@@ -3,17 +3,12 @@ const firestore = admin.firestore();
 
 module.exports.getLeaderboard = async (req, res, next) => {
   try {
-    let collectionName = "leaderboards";
+    const leaderboardCollectionRef = firestore.collection("leaderboards");
 
-    const type = req.query.type || "leaderboards";
-
-    if (type === "organization") {
-      collectionName = "organizationLeaderboard";
-    }
-
-    const leaderboardCollectionRef = firestore.collection(collectionName);
+    const type = req.query.type || "Personal";
 
     const querySnapshot = await leaderboardCollectionRef
+      .where("accountType", "==", type)
       .orderBy("points", "desc")
       .get();
 
@@ -28,6 +23,7 @@ module.exports.getLeaderboard = async (req, res, next) => {
         uid: leaderboard.uid,
         cus: leaderboard.cus,
         points: leaderboard.points,
+        accountType: leaderboard.accountType,
         rank: rank++,
       };
 

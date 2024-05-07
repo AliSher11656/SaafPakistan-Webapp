@@ -8,14 +8,14 @@ import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 
 function Leaderboard() {
-  const [leaderboardType, setLeaderboardType] = useState("individual");
+  const [leaderboardType, setLeaderboardType] = useState("Personal");
 
-  const handleIndividualLeaderboard = () => {
-    setLeaderboardType("individual");
+  const handlePersonalLeaderboard = () => {
+    setLeaderboardType("Personal");
   };
 
-  const handleOrganizationLeaderboard = () => {
-    setLeaderboardType("organization");
+  const handleCompanyLeaderboard = () => {
+    setLeaderboardType("Company");
   };
 
   return (
@@ -61,33 +61,31 @@ function Leaderboard() {
                     alignItems="center"
                   >
                     <MDButton
-                      onClick={handleIndividualLeaderboard}
+                      onClick={handlePersonalLeaderboard}
                       variant={
-                        leaderboardType === "individual"
+                        leaderboardType === "Personal"
                           ? "contained"
                           : "outlined"
+                      }
+                    >
+                      Personals Leaderboard
+                    </MDButton>
+                    <MDButton
+                      onClick={handleCompanyLeaderboard}
+                      variant={
+                        leaderboardType === "Company" ? "contained" : "outlined"
                       }
                     >
                       Individuals Leaderboard
                     </MDButton>
-                    <MDButton
-                      onClick={handleOrganizationLeaderboard}
-                      variant={
-                        leaderboardType === "organization"
-                          ? "contained"
-                          : "outlined"
-                      }
-                    >
-                      Organizations Leaderboard
-                    </MDButton>
                   </MDBox>
                 </MDBox>
                 <div>
-                  {leaderboardType === "individual" && (
-                    <Leaderboards type="individual" />
+                  {leaderboardType === "Personal" && (
+                    <Leaderboards type="Personal" />
                   )}
-                  {leaderboardType === "organization" && (
-                    <Leaderboards type="organization" />
+                  {leaderboardType === "Company" && (
+                    <Leaderboards type="Company" />
                   )}
                 </div>
               </Card>

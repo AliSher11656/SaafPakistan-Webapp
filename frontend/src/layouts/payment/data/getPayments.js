@@ -60,7 +60,7 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function Payments() {
+function Payments({ type }) {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -69,6 +69,7 @@ function Payments() {
   const [paymentsSaleModal, setPaymentsModal] = useState(false);
   const [ssFile, setSSFile] = useState("");
   const [payment, setPayment] = useState(null); // Store the selected payment
+  const [paymentType, setPaymentType] = useState(type);
 
   const location = useLocation();
   const id = new URLSearchParams(location.search).get("id");
@@ -87,7 +88,7 @@ function Payments() {
         try {
           const fetchedData = await apiService.getPayments({
             userIdToken,
-            id,
+            type: paymentType, // Pass the type to the API call
           });
           setPayments(fetchedData.ordersWithUserDetails);
           setLoading(false);
@@ -97,7 +98,7 @@ function Payments() {
         }
       })();
     }
-  }, [user]);
+  }, [user, paymentType]);
 
   const getStatusLabel = (status) => {
     switch (status) {
@@ -161,14 +162,12 @@ function Payments() {
         data,
         file: ssFile,
       });
+
       if (uploadResult) {
-        // Update the payment status to Paid if upload is successful
-        const updatedPayments = payments.map((p) => {
-          if (p.orderDocid === payment.orderDocid) {
-            return { ...p, paymentStatus: "Paid" }; // Update status only for the selected payment
-          }
-          return p; // Return other payments as they are
-        });
+        // Remove the payment from the payments array
+        const updatedPayments = payments.filter(
+          (p) => p.orderDocid !== payment.orderDocid
+        );
         setPayments(updatedPayments);
         paymentsSaleModalClose();
       }

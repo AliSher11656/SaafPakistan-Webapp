@@ -125,8 +125,8 @@ export async function getOrders({ userIdToken, id }) {
 
 //////////////////////////////////////////// Payemnt ///////////////////////////////////////////////////////////////
 
-export async function getPayments({ userIdToken }) {
-  const url = `${apiUrl}/payment`;
+export async function getPayments({ userIdToken, type }) {
+  const url = `${apiUrl}/payment?type=${type}`;
   const res = await axios.get(url, {
     headers: {
       Authorization: `Bearer ${userIdToken}`,

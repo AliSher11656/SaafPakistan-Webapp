@@ -5,8 +5,20 @@ import { Card, Grid } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import Payments from "./data/getPayments";
+import { useState } from "react";
+import MDButton from "components/MDButton";
 
 function Payment() {
+  const [paymentType, setPaymentType] = useState("unPaid");
+
+  const handleUnPaidPayment = () => {
+    setPaymentType("unPaid");
+  };
+
+  const handlePaidPayment = () => {
+    setPaymentType("Paid");
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -41,9 +53,35 @@ function Payment() {
                       Payments
                     </MDTypography>
                   </MDBox>
+                  <MDBox
+                    pt={2}
+                    pb={2}
+                    px={2}
+                    display="flex"
+                    justifyContent="space-around"
+                    alignItems="center"
+                  >
+                    <MDButton
+                      onClick={handleUnPaidPayment}
+                      variant={
+                        paymentType === "unPaid" ? "contained" : "outlined"
+                      }
+                    >
+                      Pending
+                    </MDButton>
+                    <MDButton
+                      onClick={handlePaidPayment}
+                      variant={
+                        paymentType === "Paid" ? "contained" : "outlined"
+                      }
+                    >
+                      Paid
+                    </MDButton>
+                  </MDBox>
                 </MDBox>
                 <div>
-                  <Payments />
+                  {paymentType === "unPaid" && <Payments type="unPaid" />}
+                  {paymentType === "Paid" && <Payments type="Paid" />}
                 </div>
               </Card>
             </Grid>

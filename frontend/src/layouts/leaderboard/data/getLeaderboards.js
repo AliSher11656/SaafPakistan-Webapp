@@ -69,7 +69,7 @@ function Leaderboards({ type }) {
   const { user } = useContext(AuthContext);
   const [deleteAlert, setDeleteAlert] = useState(false);
   const [leaderboardModal, setLeaderboardModal] = useState(false);
-  const [leaderboardType, setLeaderboardType] = useState(type); // New state for type
+  const [leaderboardType, setLeaderboard3Type] = useState(type); // New state for type
   const deleteAlertOpen = () => setDeleteAlert(true);
   const deleteAlertClose = () => setDeleteAlert(false);
   const leaderboardModalOpen = () => setLeaderboardModal(true);
