@@ -27,11 +27,31 @@ exports.getCompletedOrders = async (req, res) => {
           (type === "unPaid" &&
             (!order.paymentStatus || order.paymentStatus === "unPaid"))
         ) {
-          return {
-            ...order,
-            userDetails,
-            paymentStatus: order.paymentStatus || "unPaid",
-          };
+          // Fetch payment details only for paid orders
+          if (order.paymentStatus === "Paid") {
+            const paymentSnapshot = await firestore
+              .collection("payments")
+              .where("orderDocid", "==", order.orderDocid)
+              .get();
+            const paymentData = [];
+            paymentSnapshot.forEach((paymentDoc) => {
+              const payment = paymentDoc.data();
+              paymentData.push(payment);
+            });
+
+            return {
+              ...order,
+              userDetails,
+              paymentStatus: order.paymentStatus || "unPaid",
+              paymentDetails: paymentData, // Include payment details
+            };
+          } else {
+            return {
+              ...order,
+              userDetails,
+              paymentStatus: order.paymentStatus || "unPaid",
+            };
+          }
         }
         return null; // Return null for orders that don't match the type
       })

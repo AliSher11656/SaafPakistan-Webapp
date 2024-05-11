@@ -353,6 +353,15 @@ function Payments({ type }) {
                   </MDTypography>
                 ),
               },
+
+              {
+                Header: "Payment Date",
+                accessor: "paymentDate",
+              },
+              {
+                Header: "Proof Image",
+                accessor: "proofImage",
+              },
               {
                 Header: "Payment Proof",
                 accessor: "paymentProof",
@@ -368,6 +377,24 @@ function Payments({ type }) {
               paymentNumber: payment.userDetails.paymentNumber,
               paymentMethod: payment.userDetails.paymentMethod,
               paymentStatus: payment.paymentStatus,
+              paymentDate:
+                payment.paymentStatus === "Paid"
+                  ? new Date(
+                      payment.paymentDetails[0].createdAt
+                    ).toLocaleDateString()
+                  : "-----",
+              proofImage:
+                payment.paymentStatus === "Paid" ? (
+                  <a
+                    href={payment.paymentDetails[0].fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View Proof
+                  </a>
+                ) : (
+                  "-----"
+                ),
               paymentProof: (
                 <MDButton
                   variant="gradient"

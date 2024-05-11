@@ -68,7 +68,7 @@ function Leaderboard() {
                           : "outlined"
                       }
                     >
-                      Personals Leaderboard
+                      Individuals Leaderboard
                     </MDButton>
                     <MDButton
                       onClick={handleCompanyLeaderboard}
@@ -76,7 +76,7 @@ function Leaderboard() {
                         leaderboardType === "Company" ? "contained" : "outlined"
                       }
                     >
-                      Individuals Leaderboard
+                      Company Leaderboard
                     </MDButton>
                   </MDBox>
                 </MDBox>
