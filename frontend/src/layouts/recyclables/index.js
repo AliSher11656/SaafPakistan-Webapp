@@ -153,7 +153,7 @@ function Recyclable() {
               }
             />
             <TextField
-              label="Price"
+              label="Individuals Price"
               type="number"
               rows={1}
               color="secondary"
@@ -167,6 +167,20 @@ function Recyclable() {
               }
             />
 
+            <TextField
+              label="Bussinesses Price"
+              type="number"
+              rows={1}
+              color="secondary"
+              required
+              value={recyclablesData.bizPrice}
+              onChange={(e) =>
+                setRecyclablesData({
+                  ...recyclablesData,
+                  bizPrice: e.target.value,
+                })
+              }
+            />
             {error === "" ? null : (
               <MDBox mb={2} p={1}>
                 <TextField

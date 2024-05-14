@@ -222,7 +222,7 @@ function Recyclables({ refreshRecyclables }) {
               }
             />
             <TextField
-              label="Price"
+              label="Individuals Price"
               type="number"
               color="secondary"
               required
@@ -231,6 +231,19 @@ function Recyclables({ refreshRecyclables }) {
                 setSelectedRecyclable({
                   ...selectedRecyclable,
                   price: e.target.value,
+                })
+              }
+            />
+            <TextField
+              label="Bussinesses Price"
+              type="number"
+              color="secondary"
+              required
+              value={selectedRecyclable.bizPrice}
+              onChange={(e) =>
+                setSelectedRecyclable({
+                  ...selectedRecyclable,
+                  bizPrice: e.target.value,
                 })
               }
             />
@@ -289,12 +302,18 @@ function Recyclables({ refreshRecyclables }) {
           table={{
             columns: [
               { Header: "Item", accessor: "item", width: "25%" },
-              { Header: "Price", accessor: "price", width: "35%" },
+              { Header: "Individuals Price", accessor: "price", width: "35%" },
+              {
+                Header: "Bussinesses Price",
+                accessor: "bizPrice",
+                width: "35%",
+              },
               { Header: "Actions", accessor: "action", align: "center" },
             ],
             rows: recyclables.map((Recyclable) => ({
               item: Recyclable.item,
               price: Recyclable.price,
+              bizPrice: Recyclable.bizPrice,
               action: (
                 <MDBox display="flex" alignItems="center">
                   <MDBox mr={1}>
