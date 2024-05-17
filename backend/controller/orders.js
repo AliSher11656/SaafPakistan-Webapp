@@ -42,6 +42,9 @@ module.exports.getOrders = async (req, res, next) => {
       };
 
       if (statusId === undefined || statusId === order.status.toString()) {
+        if (order.status === 1 && order.cancelReason) {
+          orderObject.cancelReason = order.cancelReason;
+        }
         ordersData.push(orderObject);
       }
     });
@@ -171,7 +174,9 @@ module.exports.getRiderOrders = async (req, res, next) => {
         totalWeight: order.totalWeight,
         warehouseManagerOrderVerification: warehouseManagerOrderVerification,
       };
-
+      if (order.status === 2 && order.cancelReason) {
+        orderObject.cancelReason = order.cancelReason;
+      }
       ordersData.push(orderObject);
     });
 

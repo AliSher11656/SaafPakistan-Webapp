@@ -101,7 +101,7 @@ function Orders() {
         }
       })();
     }
-  }, [user]);
+  }, [user, id]);
 
   const handleDelete = async (deleteId) => {
     if (!user || !user.getIdToken) {
@@ -415,11 +415,16 @@ function Orders() {
                 ),
               },
               {
+                Header: "Cancel Reason",
+                accessor: "cancelReason",
+                show: orders.some((order) => order.status === 1),
+              },
+              {
                 Header: "Actions",
                 accessor: "action",
                 align: "center",
               },
-            ],
+            ].filter(Boolean),
             rows: orders.map((order) => ({
               orderId: order.orderid,
               orderDate: formatDate(order.orderDate),
@@ -433,6 +438,7 @@ function Orders() {
               totalWeight: order.totalWeight,
               status: getStatusLabel(order.status),
               paymentStatus: order.paymentStatus,
+              cancelReason: order.cancelReason ? order.cancelReason : "-----",
               action: (
                 <MDButton
                   variant="text"
