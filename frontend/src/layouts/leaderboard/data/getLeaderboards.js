@@ -323,28 +323,28 @@ function Leaderboards({ type }) {
               { Header: "Name", accessor: "cus" },
               { Header: "Rank", accessor: "rank" },
               { Header: "Points", accessor: "points" },
-              { Header: "Actions", accessor: "action", align: "center" },
+              // { Header: "Actions", accessor: "action", align: "center" },
             ],
             rows: leaderboards.map((leaderboard) => ({
               uid: leaderboard.uid,
               cus: leaderboard.cus,
               rank: leaderboard.rank,
               points: leaderboard.points,
-              action: (
-                <MDBox display="flex" alignItems="center">
-                  <MDButton
-                    variant="text"
-                    color={"dark"}
-                    onClick={() => {
-                      setSelectedLeaderboard(leaderboard);
-                      leaderboardModalOpen();
-                    }}
-                  >
-                    <Icon>edit</Icon>
-                    {/* &nbsp;edit */}
-                  </MDButton>
-                </MDBox>
-              ),
+              // action: (
+              //   <MDBox display="flex" alignItems="center">
+              //     <MDButton
+              //       variant="text"
+              //       color={"dark"}
+              //       onClick={() => {
+              //         setSelectedLeaderboard(leaderboard);
+              //         leaderboardModalOpen();
+              //       }}
+              //     >
+              //       <Icon>edit</Icon>
+              //       {/* &nbsp;edit */}
+              //     </MDButton>
+              //   </MDBox>
+              // ),
             })),
           }}
         />
