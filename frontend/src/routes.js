@@ -187,6 +187,19 @@ const routes = [
   {
     routeRole: "warehouseManager",
     type: "collapse",
+    name: "Orders",
+    key: "orders",
+    icon: <ListAltIcon />,
+    route: "/orders",
+    component: (
+      <WarehouseManagerAuthRoutes>
+        <Order></Order>
+      </WarehouseManagerAuthRoutes>
+    ),
+  },
+  {
+    routeRole: "warehouseManager",
+    type: "collapse",
     name: "Add Rider",
     key: "warehouseManager/Add Rider",
     icon: <PersonAddIcon />,
